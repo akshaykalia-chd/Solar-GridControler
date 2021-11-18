@@ -1,0 +1,108 @@
+(ExpressProject "Power"
+  (ProjectVersion "19981106")
+  (ProjectType "Analog or A/D Mixed Mode")
+  (Folder "Design Resources"
+    (Folder "Library"
+      (File ".\78xx1117xx.olb"
+        (Type "Schematic Library")))
+    (NoModify)
+    (File ".\power.dsn"
+      (Type "Schematic Design"))
+    (BuildFileAddedOrDeleted "x")
+    (CompileFileAddedOrDeleted "x"))
+  (Folder "Outputs")
+  (Folder "PSpice Resources"
+    (Folder "Simulation Profiles")
+    (Folder "Model Libraries"
+      (Sort User))
+    (Folder "Stimulus Files"
+      (Sort User))
+    (Folder "Include Files"
+      (Sort User)))
+  (DefaultLibraryBrowseDirectory "library\PSpice")
+  (PartMRUSelector
+    (VCC
+      (LibraryName "C:\ORCAD\ORCAD_16.6_LITE\TOOLS\CAPTURE\LIBRARY\CAPSYM.OLB")
+      (DeviceIndex "0"))
+    (PORTLEFT-L
+      (LibraryName "C:\ORCAD\ORCAD_16.6_LITE\TOOLS\CAPTURE\LIBRARY\CAPSYM.OLB")
+      (DeviceIndex "0"))
+    (0
+      (LibraryName "C:\ORCAD\ORCAD_16.6_LITE\TOOLS\CAPTURE\LIBRARY\CAPSYM.OLB")
+      (DeviceIndex "0"))
+    (S111733PI
+      (FullPartName "S111733PI.Normal")
+      (LibraryName "D:\AKSHAY\AKSHAY-DOCS\ORCAD\POWER\78XX1117XX.OLB")
+      (DeviceIndex "0"))
+    (C
+      (FullPartName "C.Normal")
+      (LibraryName
+         "C:\ORCAD\ORCAD_16.6_LITE\TOOLS\CAPTURE\LIBRARY\PSPICE\ANALOG.OLB")
+      (DeviceIndex "0"))
+    (78xx
+      (FullPartName "78xx.Normal")
+      (LibraryName "D:\AKSHAY\AKSHAY-DOCS\ORCAD\POWER\78XX1117XX.OLB")
+      (DeviceIndex "0"))
+    (VAC
+      (FullPartName "VAC.Normal")
+      (LibraryName
+         "C:\ORCAD\ORCAD_16.6_LITE\TOOLS\CAPTURE\LIBRARY\PSPICE\SOURCE.OLB")
+      (DeviceIndex "0"))
+    (BRIDGE
+      (FullPartName "BRIDGE.Normal")
+      (LibraryName
+         "C:\ORCAD\ORCAD_16.6_LITE\TOOLS\CAPTURE\LIBRARY\DISCRETE.OLB")
+      (DeviceIndex "0"))
+    (TRANSFORMER
+      (FullPartName "TRANSFORMER.Normal")
+      (LibraryName
+         "C:\ORCAD\ORCAD_16.6_LITE\TOOLS\CAPTURE\LIBRARY\DISCRETE.OLB")
+      (DeviceIndex "0"))
+    ("TRANSFORMER STEPUP"
+      (FullPartName "TRANSFORMER STEPUP.Normal")
+      (LibraryName
+         "C:\ORCAD\ORCAD_16.6_LITE\TOOLS\CAPTURE\LIBRARY\DISCRETE.OLB")
+      (DeviceIndex "0"))
+    (78XX/TO92
+      (FullPartName "78XX/TO92.Normal")
+      (LibraryName
+         "C:\ORCAD\ORCAD_16.6_LITE\TOOLS\CAPTURE\LIBRARY\REGULATOR.OLB")
+      (DeviceIndex "0"))
+    (78XX/TO
+      (FullPartName "78XX/TO.Normal")
+      (LibraryName
+         "C:\ORCAD\ORCAD_16.6_LITE\TOOLS\CAPTURE\LIBRARY\REGULATOR.OLB")
+      (DeviceIndex "0")))
+  (LastUsedLibraryBrowseDirectory
+     "C:\ORCAD\ORCAD_16.6_LITE\TOOLS\CAPTURE\LIBRARY")
+  (GlobalState
+    (FileView
+      (Path "Design Resources")
+      (Path "Design Resources"
+         "C:\Users\Akshay\OneDrive\Documents\Arduino\Schematics\Power\power.dsn")
+      (Path "Design Resources"
+         "C:\Users\Akshay\OneDrive\Documents\Arduino\Schematics\Power\power.dsn"
+         "SCHEMATIC1")
+      (Path "Design Resources" "Library")
+      (Path "PSpice Resources")
+      (Select "Design Resources"
+         "C:\Users\Akshay\OneDrive\Documents\Arduino\Schematics\Power\power.dsn"
+         "SCHEMATIC1" "Power"))
+    (HierarchyView)
+    (Doc
+      (Type "COrCapturePMDoc")
+      (Frame
+        (Placement "44 0 1 -1 -1 -8 -31 0 200 0 421"))
+      (Tab 0))
+    (Doc
+      (Type "COrSchematicDoc")
+      (Frame
+        (Placement "44 2 3 -1 -1 -8 -31 104 1740 104 564")
+        (Scroll "-421 0")
+        (Zoom "100")
+        (Occurrence "/"))
+      (Path
+         "C:\USERS\AKSHAY\ONEDRIVE\DOCUMENTS\ARDUINO\SCHEMATICS\POWER\POWER.DSN")
+      (Schematic "SCHEMATIC1")
+      (Page "Power")))
+  (MPSSessionName "Akshay"))

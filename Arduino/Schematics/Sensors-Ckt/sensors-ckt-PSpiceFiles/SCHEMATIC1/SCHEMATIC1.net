@@ -1,0 +1,6 @@
+* source PEAKDETECTOR-CKT
+V_V1         N15493 0  AC 0v
++SIN 0v 5v 50Hz 0 0 0
+C_C1         0 N14467 10u TC=0
+R_R1         0 N14467 4.7k
+X_D2         N15493 N14467 awb1n4148 PARAMS:                
