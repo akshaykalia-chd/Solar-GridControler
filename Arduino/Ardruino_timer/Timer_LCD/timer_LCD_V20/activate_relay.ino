@@ -52,5 +52,3 @@ void activate_relay()
     }
   }
 }
-
-
