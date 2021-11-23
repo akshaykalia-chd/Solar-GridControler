@@ -1,18 +1,17 @@
-#include <TimeAlarms.h>
 #include <Wire.h>
 #include <Time.h>
 #include <DS1307RTC.h>
 //*******************************************//
-//Board configuration 
+//Board configuration
 //This function is used for configuration various board parameters
 //Do not modify
 //*******************************************//
-void setup() 
+void setup()
 {
   pinMode(13, OUTPUT);             // initialize digital pin 13 as an output.
   pinMode(11, OUTPUT);             // initialize digital pin 11 as an output.
   pinMode(10, INPUT);              // initialize digital pin 10 as an input.
-  analogReference(DEFAULT);        // initialize analog Reference voltage to 5v 
+  analogReference(DEFAULT);        // initialize analog Reference voltage to 5v
   digitalWrite(11, HIGH);          // initialize digital pin 11 to High.
   int time_set= digitalRead(10);   // Reading Time Set Switch
   Serial.begin(9600);              // initialize serial communication at 9600 bits per second:
@@ -21,30 +20,30 @@ void setup()
     set_time();
   }
   setSyncProvider(RTC.get);    // the function to get the time from the RTC
-  if(timeStatus()!= timeSet) 
+  if(timeStatus()!= timeSet)
     {
      Serial.println("Unable to sync with the RTC");
     }
   else
     {
-      Serial.println("RTC has set the system time");      
+      Serial.println("RTC has set the system time");
     }
-  Serial.println("Date,Time,On Time,Battery Voltage,Relay Status");      
+  Serial.println("Date,Time,On Time,Battery Voltage,Relay Status");
  }
 //*******************************************************
-//Main function this will be running in a infinite loop 
+//Main function this will be running in a infinite loop
 //Do not modify unless explicitly defined by a comment
 //*******************************************************
-void loop() 
+void loop()
 {
   int sensorValue0 = analogRead(A0);                   // read the input on analog pin 0 (Time delay selection pot)
   unsigned long dtimeM = cal_wait(sensorValue0,'M');   // calculating delay time in Minutes
-  unsigned long dtimem = cal_wait(sensorValue0,'m');   // calculating delay time in Mili seconds 
+  unsigned long dtimem = cal_wait(sensorValue0,'m');   // calculating delay time in Mili seconds
   float voltage = avg_voltage();                       // record battary voltage
   boolean RelayOn = activate_relay(false,voltage);     // function to activate_relay. When called with “false” and “input voltage” it will check the voltage (Relay set if voltage less than threshold) and if relay turns ON will return true else it will return false
   displaydata(dtimeM,voltage,RelayOn,'o');             // Data Log on USB
-  Alarm.alarmRepeat(6,00,0,preset);                    // 6:00am every day (xx,xx,0,preset) values denoted by x can be modified to change trigger time
-  Alarm.alarmRepeat(18,00,0,preset);                   // 6:00pm every day (xx,xx,0,preset) values denoted by x can be modified to change trigger time
+  Alarm(06,00);                                        // 6:00am every day (xx,xx) values denoted by x can be modified to change trigger time (HH,MM)
+  Alarm(18,00);                                        // 6:00pm every day (xx,xx) values denoted by x can be modified to change trigger time (HH,MM)
   unsigned long currentMillis = millis();
   unsigned long previousMillis = currentMillis;
   while (RelayOn == true)
@@ -58,22 +57,41 @@ void loop()
     else
     {
        RelayOn = activate_relay(true,voltage);         // function activate_relay when called with “true” will set the relay off and will return false
-    }  
+    }
   }
 }
 
 //*******************************************************
-//Reading Voltage and avraging over 4 second interval 
+//Alarm Function to trigger relay at specific times
+//Do not modify unless explicitly defined by a comment
+//*******************************************************
+void Alarm(int h,int m)
+{
+  int ch = hour();
+  int cm = minute();
+  if (h==ch&&m==cm)
+  {
+    preset();
+    return;
+  }
+  else
+  {
+    return;
+  }
+}
+
+//*******************************************************
+//Reading Voltage and avraging over 4 second interval
 //Do not modify unless explicitly defined by a comment
 //*******************************************************
 float avg_voltage()
 {
-  float voltage = 0; 
+  float voltage = 0;
   int RunCount = 0;
   unsigned long currentMillis = millis();
   unsigned long previousMillis = currentMillis;
   while (currentMillis-previousMillis < 4000)
-  {	
+  {
     currentMillis = millis();
     int sensorValue1 = analogRead(A1);                   // read the input on analog pin 1(Voltage to measure)
     float voltage1 = bat_v(sensorValue1);                // calculating 60v equivalent
@@ -85,20 +103,20 @@ return voltage;
 }
 
 //*******************************************************
-//This will run on every alarm trigger 
+//This will run on every alarm trigger
 //Do not modify unless explicitly defined by a comment
 //*******************************************************
 void preset()
 {
-  unsigned long dtimeM = 150; // Change this value to desired On time 
-  digitalWrite(13, HIGH);  // turn the LED/Relay on (HIGH is the voltage level)  
+  unsigned long dtimeM = 150; // Change this value to desired On time
+  digitalWrite(13, HIGH);  // turn the LED/Relay on (HIGH is the voltage level)
   boolean relay_on = true;
-  unsigned long dtime = 9000000; // Calculating delay time based of pot position in milliseconds 
+  unsigned long dtime = 9000000; // Calculating delay time based of pot position in milliseconds
   unsigned long currentMillis = millis();
   unsigned long previousMillis = currentMillis;
   while (relay_on == true)
     {
-      float voltage=avg_voltage(); 
+      float voltage=avg_voltage();
       unsigned long currentMillis = millis();
       if (currentMillis-previousMillis < dtime)
       {
@@ -108,7 +126,7 @@ void preset()
       {
         digitalWrite(13, LOW);   // turn the LED/Relay off by making the voltage LOW
         relay_on = false;
-      }  
+      }
     }
   return;
 }
@@ -123,12 +141,12 @@ boolean activate_relay(boolean RelayStatus,float voltage) //Function to activate
   {
    digitalWrite(13, LOW);   // turn the LED/Relay off by making the voltage LOW
    boolean RelayOn = false;
-   return RelayOn;   
+   return RelayOn;
   }
-  else 
+  else
   {
-     boolean RelayOn = false; 
-     if (voltage < 25.00)
+     boolean RelayOn = false;
+     if (voltage < 43.55)
        {
          digitalWrite(13, HIGH);   // turn the LED/Relay off by making the voltage LOW
          boolean RelayOn = true; 
