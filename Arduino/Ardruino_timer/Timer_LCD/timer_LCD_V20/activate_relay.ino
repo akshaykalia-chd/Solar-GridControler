@@ -38,13 +38,13 @@ void activate_relay()
       }
       if (hour()>=07 && hour()<=16)
       {
-        if (currentMillis - previousMillis < SogMorning)
+        if (currentMillis - previousMillis > SogMorning)
         {
           digitalWrite(13, LOW);   
           RelayOn = false; 
         }
       }
-      if (currentMillis - previousMillis < SogNight)
+      if (currentMillis - previousMillis > SogNight)
       {
         digitalWrite(13, LOW);   
         RelayOn = false; 
@@ -52,5 +52,3 @@ void activate_relay()
     }
   }
 }
-
-

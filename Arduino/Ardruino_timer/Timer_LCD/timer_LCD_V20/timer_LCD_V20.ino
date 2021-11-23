@@ -36,6 +36,29 @@ void setup()
 //*******************************************************
 void loop() 
 {
+  unsigned int GridTime = 0;
+  char cont = 'a';
+  unsigned long currentMillis = millis();
+  unsigned long previousMillis = millis();
+  while(cont != 'x')
+  {
+  lcd.setCursor(0,1);
+  lcd.print("24H TGT(M):");
+  lcd.print(GridTime);
+  lcd.print("      ");
+  unsigned long GridTimem = millis();
   activate_relay();
   Alarm();
+  GridTimem = millis()-GridTimem;
+  if (GridTimem > 1000)
+  {  
+  GridTimem = GridTimem/60000 ; 
+  GridTime = GridTime+GridTimem;
+  currentMillis=millis();
+  }
+  if ((currentMillis-previousMillis)> 86400000)
+  {
+    cont = 'x';
+  }
+  }
 }
