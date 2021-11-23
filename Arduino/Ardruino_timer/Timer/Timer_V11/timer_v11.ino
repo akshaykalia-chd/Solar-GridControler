@@ -36,23 +36,36 @@ void setup()
 //*******************************************************
 void loop()
 {
-  int sensorValue0 = analogRead(A0);                   // read the input on analog pin 0 (Time delay selection pot)
-  unsigned long dtimeM = cal_wait(sensorValue0,'M');   // calculating delay time in Minutes
-  unsigned long dtimem = cal_wait(sensorValue0,'m');   // calculating delay time in Mili seconds
-  float voltage = avg_voltage();                       // record battary voltage
-  boolean RelayOn = activate_relay(false,voltage);     // function to activate_relay. When called with “false” and “input voltage” it will check the voltage (Relay set if voltage less than threshold) and if relay turns ON will return true else it will return false
-  displaydata(dtimeM,voltage,RelayOn,'o');             // Data Log on USB
-  Alarm(06,00);                                        // 6:00am every day (xx,xx) values denoted by x can be modified to change trigger time (HH,MM)
-  Alarm(18,00);                                        // 6:00pm every day (xx,xx) values denoted by x can be modified to change trigger time (HH,MM)
-  unsigned long currentMillis = millis();
-  unsigned long previousMillis = currentMillis;
+  int sensorValue0 = 0;
+  unsigned long dtimeM = 0;
+  unsigned long dtimem = 0;
+  float voltage = 0;
+  boolean RelayOn = false;
+  unsigned long currentMillis = 0;
+  unsigned long previousMillis = 0;
+  unsigned long SdtimeM = 0;
+  sensorValue0 = analogRead(A0);                   // read the input on analog pin 0 (Time delay selection pot)
+  dtimeM = cal_wait(sensorValue0,'M');             // calculating delay time in Minutes
+  dtimem = cal_wait(sensorValue0,'m');             // calculating delay time in Mili seconds
+  if (hour()>=07 && hour()<=16)
+  {
+    SdtimeM = dtimeM;
+    dtimeM = 15;
+    dtimem = 15*60*100;
+  }
+  voltage = avg_voltage();                       // record battery voltage
+  RelayOn = activate_relay(false,voltage);     // function to activate_relay. When called with “false” and “input voltage” it will check the voltage (Relay set if voltage less than threshold) and if relay turns ON will return true else it will return false
+  displaydata(dtimeM,voltage,RelayOn,'o',SdtimeM);          // Data Log on USB
+  Alarm(1800,2030);                                       // 6:00pm every day (xxxx,xxxx) values denoted by x can be modified to change trigger time (On time is hours for example 1800 for 6:00PM  ,off time in hours example 2030 for 8:30PM)
+  currentMillis = millis();
+  previousMillis = currentMillis;
   while (RelayOn == true)
   {
     currentMillis = millis();
     if (currentMillis-previousMillis < dtimem)
     {
-      float voltage = avg_voltage();                   // record battary voltage
-      displaydata(dtimeM,voltage,RelayOn,'o');         // Data Log on USB
+      voltage = avg_voltage();                   // record battery voltage
+      displaydata(dtimeM,voltage,RelayOn,'o',SdtimeM);         // Data Log on USB
     }
     else
     {
@@ -65,19 +78,30 @@ void loop()
 //Alarm Function to trigger relay at specific times
 //Do not modify unless explicitly defined by a comment
 //*******************************************************
-void Alarm(int h,int m)
+void Alarm(int OnTime,int OffTime)
 {
-  int ch = hour();
-  int cm = minute();
-  if (h==ch&&m==cm)
-  {
-    preset();
-    return;
-  }
-  else
-  {
-    return;
-  }
+  int cHs = hour();
+  int cMs = minute();
+  int cTime =cHs*100;
+  cTime = cTime + cMs;
+  if (cTime>=OnTime && cTime<OffTime)
+    {
+      float HDtime=OffTime-cTime;
+        if (HDtime<100)
+          {
+          int Dtime=HDtime;
+          preset(Dtime);
+          return;
+          }
+        else
+          {
+          HDtime = HDtime/100;
+          int Dtime = HDtime*60;
+          preset(Dtime);
+          return;
+          }
+     }
+return;
 }
 
 //*******************************************************
@@ -101,17 +125,16 @@ float avg_voltage()
 voltage = voltage/RunCount;
 return voltage;
 }
-
 //*******************************************************
 //This will run on every alarm trigger
 //Do not modify unless explicitly defined by a comment
 //*******************************************************
-void preset()
+void preset(int Dtime)
 {
-  unsigned long dtimeM = 150; // Change this value to desired On time
+  unsigned long dtimeM = Dtime;
   digitalWrite(13, HIGH);  // turn the LED/Relay on (HIGH is the voltage level)
   boolean relay_on = true;
-  unsigned long dtime = 9000000; // Calculating delay time based of pot position in milliseconds
+  unsigned long dtime = dtimeM * 60000;
   unsigned long currentMillis = millis();
   unsigned long previousMillis = currentMillis;
   while (relay_on == true)
@@ -120,17 +143,16 @@ void preset()
       unsigned long currentMillis = millis();
       if (currentMillis-previousMillis < dtime)
       {
-        displaydata(dtimeM,voltage, relay_on, 'P');
-       }
+       displaydata(dtimeM,voltage, relay_on, 'P',0);
+      }
       else
       {
-        digitalWrite(13, LOW);   // turn the LED/Relay off by making the voltage LOW
-        relay_on = false;
+       digitalWrite(13, LOW);   // turn the LED/Relay off by making the voltage LOW
+       relay_on = false;
       }
     }
   return;
 }
-
 //*******************************************************
 //Function to activate relay
 //Do not modify unless explicitly defined by a comment
@@ -149,7 +171,7 @@ boolean activate_relay(boolean RelayStatus,float voltage) //Function to activate
      if (voltage < 43.55)
        {
          digitalWrite(13, HIGH);   // turn the LED/Relay off by making the voltage LOW
-         boolean RelayOn = true; 
+         boolean RelayOn = true;
          return RelayOn;
        }
      else
@@ -163,7 +185,7 @@ boolean activate_relay(boolean RelayStatus,float voltage) //Function to activate
 //Function to print data on usb
 //Do not modify unless explicitly defined by a comment
 //*******************************************************
-void displaydata(unsigned long DelayTimeInMin,float BatVolts, boolean RelayStatus, char CalledBy) //function to print data on usb
+void displaydata(unsigned long DelayTimeInMin,float BatVolts, boolean RelayStatus, char CalledBy,unsigned long SdtimeM) //function to print data on usb
 {
   digitalClockDisplay();
   Serial.print(DelayTimeInMin);
@@ -187,9 +209,17 @@ void displaydata(unsigned long DelayTimeInMin,float BatVolts, boolean RelayStatu
   {
     Serial.print("Relay Off");
   }
+  if (hour()>=07 && hour()<=16)
+  {
+    Serial.print(",");
+    Serial.print("Varialble On time is currently disabled. The Pot is currently set to ");
+    Serial.print(SdtimeM);
+    Serial.print(" Minutes");
+   }
   Serial.println();
-  return;   
+ return;
 }
+
 //*******************************************************
 //Function to calculate 60v equivalent 
 //Do not modify unless explicitly defined by a comment
