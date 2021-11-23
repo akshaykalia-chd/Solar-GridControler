@@ -51,12 +51,12 @@ void loop()
   {
     SdtimeM = dtimeM;
     dtimeM = 15;
-    dtimem = 15*60*100;
+    dtimem = 15*60000;
   }
   voltage = avg_voltage();                       // record battery voltage
   RelayOn = activate_relay(false,voltage);     // function to activate_relay. When called with “false” and “input voltage” it will check the voltage (Relay set if voltage less than threshold) and if relay turns ON will return true else it will return false
   displaydata(dtimeM,voltage,RelayOn,'o',SdtimeM);          // Data Log on USB
-  Alarm(18,00,20,30);                                       // 6:00pm every day (xx,xx,xx,xx) values denoted by x can be modified to change trigger time (On time in hours for example 18,00 for 6:00PM  ,off time in hours example 20,30 for 8:30PM)
+  Alarm(1800,2030);                                       // 6:00pm every day (xx,xx,xx,xx) values denoted by x can be modified to change trigger time (On time in hours for example 18,00 for 6:00PM  ,off time in hours example 20,30 for 8:30PM)
   currentMillis = millis();
   previousMillis = currentMillis;
   while (RelayOn == true)
@@ -75,45 +75,45 @@ void loop()
 }
 
 //*******************************************************
-//Alarm Function to trigger relay at specific times
-//Do not modify unless explicitly defined by a comment
-//*******************************************************
-void Alarm(int OnHours,int OnMin,int OffHours,int OffMin)
-{
-  int cHs = hour();
-  int cMs = minute();
-  int OnTime = OnHours*100;
-  int OffTime = OffHours*100;
-  int cTime =cHs*100;
-  OnTime = OnTime + OnMin;
-  OffTime = OffTime + OffMin;
-  cTime = cTime + cMs;
-    if (cTime>=OnTime)
-    {
-     preset(true,OffTime);
-    }
-return;
-}
-//*******************************************************
 //This will run on every alarm trigger
 //Do not modify unless explicitly defined by a comment
 //*******************************************************
-void preset(boolean relay_on,int OffTime)
+void Alarm(int onTime,int offTime)
 {
-  while (relay_on == true)
+  int HH,MM,cTime;
+  HH=hour();
+  MM=minute();
+  cTime=HH*100;
+  cTime=cTime+MM;
+    if(cTime >= onTime && cTime <= offTime)
     {
-      digitalWrite(13, HIGH);  // turn the LED/Relay on (HIGH is the voltage level)
-      int cHs = hour();
-      int cMs = minute();
-      int cTime =cHs*100;
-      cTime = cTime + cMs;
-        if(cTime == OffTime)
-          {
-            relay_on == false;
-          }
-      float voltage=avg_voltage();
-      displaydata(OffTime,voltage, relay_on, 'P',0);
-
+      while(cTime != offTime)
+        {
+          digitalWrite(13, HIGH);   // turn the LED/Relay on by making the voltage high
+          boolean relay_on = true;
+          float voltage=avg_voltage();
+          displaydata(offTime,voltage, relay_on, 'P',0);
+          HH=hour();
+          MM=minute();
+          cTime=HH*100;
+          cTime=cTime+MM;
+        }
+      digitalWrite(13, LOW);   // turn the LED/Relay off by making the voltage low
+    }
+    if(cTime >= onTime && offTime <= onTime)
+    {
+      while(cTime != offTime)
+        {
+          digitalWrite(13, HIGH);   // turn the LED/Relay on by making the voltage high
+          boolean relay_on = true;
+          float voltage=avg_voltage();
+          displaydata(offTime,voltage, relay_on, 'P',0);
+          HH=hour();
+          MM=minute();
+          cTime=HH*100;
+          cTime=cTime+MM;
+        }
+      digitalWrite(13, LOW);   // turn the LED/Relay off by making the voltage low
      }
   return;
 }
