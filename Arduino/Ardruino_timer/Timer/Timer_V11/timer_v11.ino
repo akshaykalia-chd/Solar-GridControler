@@ -85,30 +85,38 @@ void Alarm(int OnHours,int OnMin,int OffHours,int OffMin)
   int OnTime = OnHours*100;
   int OffTime = OffHours*100;
   int cTime =cHs*100;
-  int DiffH = 0;
-  int DiffM = 0;
   OnTime = OnTime + OnMin;
   OffTime = OffTime + OffMin;
   cTime = cTime + cMs;
-    if (cTime>=OnTime && cTime<OffTime)
+    if (cTime>=OnTime)
     {
-     DiffH=OffHours-OnHours;
-     DiffH=DiffH*60;
-        if(OffMin < OnMin)
-          {
-           DiffM = OnMin - OffMin;
-          }
-         else
-          {
-           DiffM = OffMin - OnMin;
-          }
-     int Dtime=DiffH + DiffM;
-     preset(Dtime);
-     return;
+     preset(true,OffTime);
     }
 return;
 }
+//*******************************************************
+//This will run on every alarm trigger
+//Do not modify unless explicitly defined by a comment
+//*******************************************************
+void preset(boolean relay_on,int OffTime)
+{
+  while (relay_on == true)
+    {
+      digitalWrite(13, HIGH);  // turn the LED/Relay on (HIGH is the voltage level)
+      int cHs = hour();
+      int cMs = minute();
+      int cTime =cHs*100;
+      cTime = cTime + cMs;
+        if(cTime == OffTime)
+          {
+            relay_on == false;
+          }
+      float voltage=avg_voltage();
+      displaydata(OffTime,voltage, relay_on, 'P',0);
 
+     }
+  return;
+}
 //*******************************************************
 //Reading Voltage and avraging over 4 second interval
 //Do not modify unless explicitly defined by a comment
@@ -130,34 +138,7 @@ float avg_voltage()
 voltage = voltage/RunCount;
 return voltage;
 }
-//*******************************************************
-//This will run on every alarm trigger
-//Do not modify unless explicitly defined by a comment
-//*******************************************************
-void preset(int Dtime)
-{
-  unsigned long dtimeM = Dtime;
-  digitalWrite(13, HIGH);  // turn the LED/Relay on (HIGH is the voltage level)
-  boolean relay_on = true;
-  unsigned long dtime = dtimeM * 60000;
-  unsigned long currentMillis = millis();
-  unsigned long previousMillis = currentMillis;
-  while (relay_on == true)
-    {
-      float voltage=avg_voltage();
-      unsigned long currentMillis = millis();
-      if (currentMillis-previousMillis < dtime)
-      {
-       displaydata(dtimeM,voltage, relay_on, 'P',0);
-      }
-      else
-      {
-       digitalWrite(13, LOW);   // turn the LED/Relay off by making the voltage LOW
-       relay_on = false;
-      }
-    }
-  return;
-}
+
 //*******************************************************
 //Function to activate relay
 //Do not modify unless explicitly defined by a comment
