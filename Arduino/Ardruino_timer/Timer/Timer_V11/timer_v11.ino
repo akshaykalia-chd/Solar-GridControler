@@ -56,7 +56,7 @@ void loop()
   voltage = avg_voltage();                       // record battery voltage
   RelayOn = activate_relay(false,voltage);     // function to activate_relay. When called with “false” and “input voltage” it will check the voltage (Relay set if voltage less than threshold) and if relay turns ON will return true else it will return false
   displaydata(dtimeM,voltage,RelayOn,'o',SdtimeM);          // Data Log on USB
-  Alarm(1800,2030);                                       // 6:00pm every day (xxxx,xxxx) values denoted by x can be modified to change trigger time (On time is hours for example 1800 for 6:00PM  ,off time in hours example 2030 for 8:30PM)
+  Alarm(18,00,20,30);                                       // 6:00pm every day (xx,xx,xx,xx) values denoted by x can be modified to change trigger time (On time in hours for example 18,00 for 6:00PM  ,off time in hours example 20,30 for 8:30PM)
   currentMillis = millis();
   previousMillis = currentMillis;
   while (RelayOn == true)
@@ -78,29 +78,34 @@ void loop()
 //Alarm Function to trigger relay at specific times
 //Do not modify unless explicitly defined by a comment
 //*******************************************************
-void Alarm(int OnTime,int OffTime)
+void Alarm(int OnHours,int OnMin,int OffHours,int OffMin)
 {
   int cHs = hour();
   int cMs = minute();
+  int OnTime = OnHours*100;
+  int OffTime = OffHours*100;
   int cTime =cHs*100;
+  int DiffH = 0;
+  int DiffM = 0;
+  OnTime = OnTime + OnMin;
+  OffTime = OffTime + OffMin;
   cTime = cTime + cMs;
-  if (cTime>=OnTime && cTime<OffTime)
+    if (cTime>=OnTime && cTime<OffTime)
     {
-      float HDtime=OffTime-cTime;
-        if (HDtime<100)
+     DiffH=OffHours-OnHours;
+     DiffH=DiffH*60;
+        if(OffMin < OnMin)
           {
-          int Dtime=HDtime;
-          preset(Dtime);
-          return;
+           DiffM = OnMin - OffMin;
           }
-        else
+         else
           {
-          HDtime = HDtime/100;
-          int Dtime = HDtime*60;
-          preset(Dtime);
-          return;
+           DiffM = OffMin - OnMin;
           }
-     }
+     int Dtime=DiffH + DiffM;
+     preset(Dtime);
+     return;
+    }
 return;
 }
 
