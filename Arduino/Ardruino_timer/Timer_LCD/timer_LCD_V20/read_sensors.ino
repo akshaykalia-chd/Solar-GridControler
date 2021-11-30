@@ -53,20 +53,18 @@ float avg_current(String sel)
   sensorValue1 = sensorValue1/RunCount;
   if (sel == "DC")
     {
-      sensorValue1 = sensorValue1 - 484;
+      sensorValue1 = sensorValue1-491;
+      current = bat_c(sensorValue1,"DC");
     }
   if (sel == "AC")
     {
-      sensorValue1 = sensorValue1 - 488;
+      sensorValue1 = sensorValue1-189;
+      current = bat_c(sensorValue1,"AC");
+      time = timem/3600000;
+      KW = current * 250;
+      KW = KW * time;
+      KWH = KWH + KW;
     }
-  current = bat_c(sensorValue1);
-  if (sel == "AC")
-  {
-    time = timem/3600000;
-    KW = current * 250;
-    KW = KW * time;
-    KWH = KWH + KW;
-  }
   return current;
 }
 //*******************************************************
@@ -79,10 +77,24 @@ float bat_v (int x)
   return ret_bat;
 }
 
-float bat_c (int x)
+float bat_c (int x,String sel)
 {
-  float ret_c = x * (EEPROM.read(22)/1024.00);
-  return ret_c;
+  if (sel == "DC")
+  {
+    float ret_c = x * (EEPROM.read(22)/1024.00);
+    return ret_c;
+  }
+  if (sel == "AC")
+  {
+    float ret_c = x * (EEPROM.read(22)/1024.00);
+    if ( x >= 20 )
+    {
+    ret_c = ret_c * 1.5;
+    return ret_c;
+    }
+    ret_c = ret_c * 2.6;
+    return ret_c;
+  }
 }
 
 //*******************************************************
