@@ -1,16 +1,16 @@
 //*******************************************************
 //Function to log data using Serial line monitoring over usb
 //*******************************************************
-void datalog(String RelayStatus) //function to print data on usb
+void datalog(String RelayStatus,float amps,float aamps,float volts) //function to print data on usb
 {
   if (EEPROM.read(29) == 1)
   {
-    byte NoOffTimers = EEPROM.read(0);  
+    byte NoOffTimers = EEPROM.read(0);
     Serial.print(day());
     Serial.print("/");
     Serial.print(month());
     Serial.print("/");
-    Serial.print(year()); 
+    Serial.print(year());
     Serial.print(",");
     Serial.print(hour());
     Serial.print(":");
@@ -18,13 +18,15 @@ void datalog(String RelayStatus) //function to print data on usb
     Serial.print(":");
     Serial.print(second());
     Serial.print(",");
-    Serial.print(avg_current("DC"));
+    Serial.print(amps);
     Serial.print(",");
-    Serial.print(avg_voltage());
+    Serial.print(volts);
     Serial.print(",");
-    Serial.print(avg_current("AC"));
+    Serial.print(aamps);
     Serial.print(",");
     Serial.print(KWH);
+    Serial.print(",");
+    Serial.print(GridTime);
     Serial.print(",");
     Serial.print(EEPROM.read(27));
     Serial.print(",");

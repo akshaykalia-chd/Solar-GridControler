@@ -2,7 +2,7 @@
 //This will run on every alarm trigger 
 //Do not modify unless explicitly defined by a comment
 //*******************************************************
-void Alarm(unsigned int GridTime)
+void Alarm()
 {
   byte NoOfTimers;
   NoOfTimers = EEPROM.read(0);
@@ -27,27 +27,30 @@ void Alarm(unsigned int GridTime)
     offTime=offTime+EEPROM.read(addr3); // Off Mins
     if(cTime >= onTime && cTime <= offTime)
     {
-      relay_on(cTime,offTime,CutOffApms,GridTime);
+      relay_on(cTime,offTime,CutOffApms);
     }
     if(cTime >= onTime && offTime <= onTime)
     {
-      relay_on(cTime,offTime,CutOffApms,GridTime);
+      relay_on(cTime,offTime,CutOffApms);
     }
   }
 }
 
-void relay_on(int cT,int oT,float cAmps,unsigned int GridTime)
+void relay_on(int cT,int oT,float cAmps)
 {
   while(cT != oT)
   {
+    unsigned long previousMillis = millis();
     digitalWrite(13, HIGH);
     float volts=avg_voltage();
     float amps=avg_current("DC");
+    cal_gridtime(amps,previousMillis);
     float ampsac=avg_current("AC");
-    lcd_Display(amps,volts,"On",GridTime,ampsac);
-    datalog("On");
+    lcd_Display(amps,volts,"On",ampsac);
+    datalog("On",amps,ampsac,volts);
     delay(2000);
-    if(amps < cAmps)
+    float mamps = amps * (-1); //Moded amps
+    if(mamps < cAmps)
     {
       digitalWrite(13, LOW);
       int HH=hour();
@@ -56,13 +59,15 @@ void relay_on(int cT,int oT,float cAmps,unsigned int GridTime)
       cTime=cTime+MM;
       while (cTime != oT)
         {
+        previousMillis = millis();
         float CutOffVolts = EEPROM.read(24)/100;
         CutOffVolts = CutOffVolts + EEPROM.read(23);
         float volts=avg_voltage();
         float amps=avg_current("DC");
+        cal_gridtime(amps,previousMillis);
         float ampsac=avg_current("AC");
-        lcd_Display(amps,volts,"Off",GridTime,ampsac);
-        datalog("Off");
+        lcd_Display(amps,volts,"Off",ampsac);
+        datalog("Off",amps,ampsac,volts);
         if (volts < CutOffVolts)
          {
           return;

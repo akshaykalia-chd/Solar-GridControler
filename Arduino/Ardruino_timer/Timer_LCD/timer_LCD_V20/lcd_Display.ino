@@ -1,7 +1,7 @@
 //*******************************************************
 //Function to display data on LCD
 //*******************************************************
-void lcd_Display(float amps,float volts,String Rstate,unsigned int GridTime,float ampsac)
+void lcd_Display(float amps,float volts,String Rstate,float ampsac)
 {
   if(button() == "Select")
    {
@@ -12,13 +12,18 @@ void lcd_Display(float amps,float volts,String Rstate,unsigned int GridTime,floa
      lcd.print(ampsac);
      lcd.print("            ");
      lcd.setCursor(0,1);
-     lcd.print("24H TGT(M):");
+     lcd.print("TGT(M):");
      lcd.print(GridTime);
      lcd.print("        ");
    }
   if (button() == "None")
   {
-    digitalClockDisplay(0,0);
+    float runtime = 100/amps;
+    runtime = runtime * 0.6;
+    lcd.setCursor(0,0);
+    lcd.print("Run Time(H):");
+    lcd.print(runtime);
+    lcd.print("         ");
     lcd.setCursor(0,1);
     lcd.print(volts);
     lcd.print("V");
@@ -29,12 +34,7 @@ void lcd_Display(float amps,float volts,String Rstate,unsigned int GridTime,floa
   }
   if (button() == "Right")
   {
-    float runtime = 100/amps;
-    runtime = runtime * 0.7;
-    lcd.setCursor(0,0);
-    lcd.print("Run Time(H):"); 
-    lcd.print(runtime);
-    lcd.print("         ");
+    digitalClockDisplay(0,0);
     lcd.setCursor(0,1);
     lcd.print("Grid Supply:"); 
     lcd.print(Rstate);

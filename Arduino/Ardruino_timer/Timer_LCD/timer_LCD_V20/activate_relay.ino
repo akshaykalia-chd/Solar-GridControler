@@ -2,19 +2,20 @@
 //Function to activate relay
 //Do not modify unless explicitly defined by a comment
 //*******************************************************
-void activate_relay(unsigned int GridTime)
+void activate_relay()
 {
+  unsigned long currentMillis = millis();
+  unsigned long previousMillis = millis();
   float volts=avg_voltage();
   float amps=avg_current("DC");
+  cal_gridtime(amps,previousMillis);
   float ampsac=avg_current("AC");
   digitalWrite(13, LOW);
-  lcd_Display(amps,volts,"Off",GridTime,ampsac);
-  datalog("Off");
+  lcd_Display(amps,volts,"Off",ampsac);
+  datalog("Off",amps,ampsac,volts);
   boolean RelayOn = false;
   float CutOffVolts = EEPROM.read(24)/100;
   CutOffVolts = CutOffVolts + EEPROM.read(23);
-  unsigned long currentMillis = millis();
-  unsigned long previousMillis = millis();
   if (volts < CutOffVolts)
   {
     digitalWrite(13, HIGH);
@@ -25,16 +26,18 @@ void activate_relay(unsigned int GridTime)
     unsigned long SogNight =  EEPROM.read(28);
     SogMorning = SogMorning * 60000;
     SogNight = SogNight * 60000;
+    delay(2000);
     while (RelayOn == true)
     {
       currentMillis = millis();
-      lcd_Display(amps,volts,"On",GridTime,ampsac);
-      datalog("On");
+      lcd_Display(amps,volts,"On",ampsac);
+      datalog("On",amps,ampsac,volts);
       volts=avg_voltage();
       amps=avg_current("DC");
+      cal_gridtime(amps,currentMillis);
       ampsac=avg_current("AC");
-      delay(2000);
-      if (amps < CutOffApms)
+      float mamps = amps * (-1); //moded amps
+      if (mamps < CutOffApms)
       {
         digitalWrite(13, LOW);
         RelayOn = false;

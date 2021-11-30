@@ -1,9 +1,9 @@
 //*******************************************************
-//Reading Voltage and avraging over 4 second interval 
+//Reading Voltage and avraging over 100 Mili second interval
 //*******************************************************
 float avg_voltage()
 {
-  float voltage = 0; 
+  float voltage = 0;
   int RunCount = 0;
   int sensorValue1 = 0;
   unsigned long currentMillis = millis();
@@ -30,7 +30,6 @@ float avg_current(String sel)
   int RunCount = 0;
   int sensorValue1 = 0;
   float time = 0;
-  float KW = 0;
   unsigned long currentMillis = millis();
   unsigned long previousMillis = currentMillis;
   int timem = 0;
@@ -60,11 +59,12 @@ float avg_current(String sel)
     {
       sensorValue1 = sensorValue1-189;
       current = bat_c(sensorValue1,"AC");
+      float KW = 0;
       time = timem/3600000;
-      KW = current * 250;
+      KW = current * 255;
       KW = KW * time;
       KWH = KWH + KW;
-    }
+     }
   return current;
 }
 //*******************************************************
@@ -103,19 +103,31 @@ float bat_c (int x,String sel)
 //*******************************************************
 String button()
 {
-  int sensorValue0 = analogRead(A0);                   
+  int sensorValue0 = analogRead(A0);
   if (sensorValue0 < 5)
     return ("Right");
   if (sensorValue0 > 95 && sensorValue0 <= 100)
     return ("Up");
-  if (sensorValue0 > 250 && sensorValue0 <= 255)  
+  if (sensorValue0 > 250 && sensorValue0 <= 255)
     return ("Down");
-  if (sensorValue0 > 404 && sensorValue0 <= 408)  
+  if (sensorValue0 > 404 && sensorValue0 <= 408)
     return ("Left");
-  if (sensorValue0 > 635 && sensorValue0 <= 640)  
+  if (sensorValue0 > 635 && sensorValue0 <= 640)
     return ("Select");
   return ("None");
 }
 
-
+//*******************************************************
+//Function to update grid time
+//*******************************************************
+void cal_gridtime(float amps,unsigned long previousMillis)
+{
+if (amps < 0)
+  {
+    unsigned long GridTimem = 0;
+    GridTimem = GridTimem + millis()-previousMillis;
+    GridTimem = GridTimem/60000;
+    GridTime = GridTime + GridTimem;
+   }
+}
 
