@@ -18,9 +18,13 @@ void datalog(String RelayStatus) //function to print data on usb
     Serial.print(":");
     Serial.print(second());
     Serial.print(",");
-    Serial.print(avg_current());
+    Serial.print(avg_current("DC"));
     Serial.print(",");
     Serial.print(avg_voltage());
+    Serial.print(",");
+    Serial.print(avg_current("AC"));
+    Serial.print(",");
+    Serial.print(KWH);
     Serial.print(",");
     Serial.print(EEPROM.read(27));
     Serial.print(",");

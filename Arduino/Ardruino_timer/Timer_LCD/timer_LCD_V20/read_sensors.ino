@@ -5,50 +5,68 @@ float avg_voltage()
 {
   float voltage = 0; 
   int RunCount = 0;
+  int sensorValue1 = 0;
   unsigned long currentMillis = millis();
   unsigned long previousMillis = currentMillis;
-  while (currentMillis-previousMillis < 300)
-  {	
+  while (currentMillis-previousMillis < 100)
+  {
     currentMillis = millis();
-    int sensorValue1 = analogRead(A2);                   // read the input on analog pin 1(Voltage to measure)
-    delay(10);
-    float voltage1 = bat_v(sensorValue1);                // calculating 60v equivalent
-    voltage = voltage + voltage1;
+    sensorValue1 = sensorValue1 + analogRead(A2);                   // read the input on analog pin 1(Voltage to measure)
+    delay(1);
     RunCount = RunCount + 1;
   }
-  voltage = voltage/RunCount;
+  sensorValue1= sensorValue1/RunCount;
+  voltage = bat_v(sensorValue1);
   return voltage;
 }
 
 //*******************************************************
-//Reading Current and avraging over 1 second interval 
+//Reading Current and avraging over 1 second interval
 //Do not modify unless explicitly defined by a comment
 //*******************************************************
-float avg_current()
+float avg_current(String sel)
 {
-  float current = 0; 
+  float current = 0;
   int RunCount = 0;
+  int sensorValue1 = 0;
+  float time = 0;
+  float KW = 0;
   unsigned long currentMillis = millis();
   unsigned long previousMillis = currentMillis;
-  while (currentMillis-previousMillis < 300)
-  {	
-    currentMillis = millis();
-    int sensorValue1 = analogRead(A1);                   // read the input on analog pin 1(Voltage to measure)
-    delay(10);
-    sensorValue1 = sensorValue1 - 510; 
-    if (sensorValue1 < 0)
-    {
-      sensorValue1 = sensorValue1 * (-1);
-    }
-    float current1 = bat_c(sensorValue1);                // calculating 60v equivalent
-    current = current + current1;
-    RunCount = RunCount + 1;
-  }
-  if (current < 0)
+  int timem = 0;
+  while (timem < 100)
   {
-    current = current * (-1);
+    timem = currentMillis - previousMillis;
+    currentMillis = millis();
+    if (sel == "DC")
+    {
+      sensorValue1 = sensorValue1 + analogRead(A1);                   // read the input on analog pin 1(Voltage to measure)
+      delay(2);
+    }
+    if (sel == "AC")
+    {
+      sensorValue1 = sensorValue1 + analogRead(A3);                   // read the input on analog pin 1(Voltage to measure)
+      delay(2);
+    }
+    RunCount = RunCount + 1;
+   }
+  sensorValue1 = sensorValue1/RunCount;
+  if (sel == "DC")
+    {
+      sensorValue1 = sensorValue1 - 484;
+    }
+  if (sel == "AC")
+    {
+      sensorValue1 = sensorValue1 - 488;
+    }
+  current = bat_c(sensorValue1);
+  if (sel == "AC")
+  {
+    time = timem/3600000;
+    KW = current * 250;
+    KW = KW * time;
+    KWH = KWH + KW;
   }
-  current = current/RunCount;
   return current;
 }
 //*******************************************************
@@ -57,13 +75,13 @@ float avg_current()
 //*******************************************************
 float bat_v (int x)
 {
-  float ret_bat = x * (EEPROM.read(21)/1023.00);
+  float ret_bat = x * (EEPROM.read(21)/1024.00);
   return ret_bat;
 }
 
 float bat_c (int x)
 {
-  float ret_c = x * (EEPROM.read(22)/1023.00);
+  float ret_c = x * (EEPROM.read(22)/1024.00);
   return ret_c;
 }
 
