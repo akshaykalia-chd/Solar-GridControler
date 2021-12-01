@@ -53,94 +53,66 @@ void set_Aacnl()
 
 //*******************************************************
 //Function to setup DC current offset
-//EPROM Address DC 31,32,33,34
+//EPROM Address DC 31,32
 //*******************************************************
 void set_DcOffset()
 {
-  int offset = get_offset("DC");
-  offset = update_Tcom("DC Offset", offset, 1020);
-  set_offset("DC", offset);
+  int offset = read_4DitiNo(31, 32);
+  offset = update_Tcom("DC Offset", offset, 1024);
+  store_4DitiNo(offset,31, 32);
 }
 
 //*******************************************************
 //Function to setup AC current offset
-//EPROM Address AC 35,36,37,38
+//EPROM Address AC 33,34
 //*******************************************************
 void set_AcOffset()
 {
-  int offset = get_offset("AC");
-  offset = update_Tcom("AC Offset", offset, 1020);
-  set_offset("AC", offset);
+  int offset = read_4DitiNo(33, 34);
+  offset = update_Tcom("AC Offset", offset, 1024);
+  store_4DitiNo(offset, 33,34);
 }
 //*******************************************************
-//Function to read/write ofset value
-//EPROM Address DC 31,32,33,34
-//EPROM Address AC 35,36,37,38
+//Function to read/write 4 ditin number from eprom
 //*******************************************************
-int get_offset(String sel)
+void store_4DitiNo(int offset, int add1, int add2)
 {
-  byte b1 = 0;
-  byte b2 = 0;
-  byte b3 = 0;
-  byte b4 = 0;
-  if (sel == "DC")
-    {
-    b1 = EEPROM.read(31);
-    b2 = EEPROM.read(32);
-    b3 = EEPROM.read(33);
-    b4 = EEPROM.read(34);
-    }
-  if (sel == "AC")
-    {
-    b1 = EEPROM.read(35);
-    b2 = EEPROM.read(36);
-    b3 = EEPROM.read(37);
-    b4 = EEPROM.read(38);
-    }
-int offset = b1 + b2 + b3 + b4;
-return offset;
+  byte b1 = offset / 100;
+  int temp = b1 * 100;
+  byte b2 = offset - temp;
+  EEPROM.write(add1, b1);
+  EEPROM.write(add2, b2);
 }
-
-void set_offset(String sel, int offset)
+int read_4DitiNo(int add1, int add2)
 {
-  byte b1 = 0;
-  byte b2 = 0;
-  byte b3 = 0;
-  byte b4 = 0;
-  if (offset <= 255)
+  byte b1 = EEPROM.read(add1);
+  byte b2 = EEPROM.read(add2);
+  int temp = b1 * 100;
+  temp += b2;
+  return temp;
+}
+//*******************************************************
+//Function to get Ontime and OffTime for timers
+//Do not modify unless explicitly defined by a comment
+//*******************************************************
+int get_timer(int timerNo, byte NoOfTimers, String sel)
+{
+  byte addr = timerNo + 1;
+  byte addr1 = addr + NoOfTimers;
+  byte addr2 = addr1 + NoOfTimers;
+  byte addr3 = addr2 + NoOfTimers;
+  if (sel == "OnTime")
   {
-    b1 = offset;
+    int OnTime = EEPROM.read(addr); //OnHours
+    OnTime = OnTime * 100;
+    OnTime = OnTime + EEPROM.read(addr1); // On Mins
+    return OnTime;
   }
-  if (offset > 255 && offset <= 510)
+  if (sel == "OffTime")
   {
-    b1 = 255;
-    b2 = offset - 255;
-  }
-  if (offset > 510 && offset <= 765)
-  {
-    b1 = 255;
-    b2 = 255;
-    b3 = offset - 510;
-  }
-  if (offset >= 765)
-  {
-    b1 = 255;
-    b2 = 255;
-    b3 = 255;
-    b4 = offset - 765;
-  }
-  if (sel == "DC")
-  {
-    EEPROM.write(31, b1);
-    EEPROM.write(32, b2);
-    EEPROM.write(33, b3);
-    EEPROM.write(34, b4);
-  }
-  if (sel == "AC")
-  {
-    EEPROM.write(35, b1);
-    EEPROM.write(36, b2);
-    EEPROM.write(37, b3);
-    EEPROM.write(38, b4);
+    int OffTime = EEPROM.read(addr2); // Off Hours
+    OffTime = OffTime * 100;
+    OffTime = OffTime + EEPROM.read(addr3); // Off Mins
+    return OffTime;
   }
 }

@@ -1,7 +1,7 @@
 //*******************************************************
 //Reading Voltage and avraging over 100 Mili second interval
 //*******************************************************
-float avg_voltage()
+float avg_voltage(float sysvoltsdc)
 {
   float voltage = 0;
   int RunCount = 0;
@@ -14,15 +14,15 @@ float avg_voltage()
     RunCount = RunCount + 1;
   }
   sensorValue1 = sensorValue1 / RunCount;
-  voltage = bat_v(sensorValue1);
+  voltage = sensorValue1 * sysvoltsdc;
   return voltage;
 }
 
 //*******************************************************
-//Reading Current and avraging over 1 second interval
+//Reading Current and avraging over 100 milisecond interval
 //Do not modify unless explicitly defined by a comment
 //*******************************************************
-float avg_current(String sel)
+float avg_currentDc(float SysampsDC, float DCcalf, int DcOffset)
 {
   float current = 0;
   int RunCount = 0;
@@ -30,78 +30,38 @@ float avg_current(String sel)
   unsigned long previousMillis = millis();
   while (millis() - previousMillis < 100)
   {
-    if (sel == "DC")
-    {
-      sensorValue1 = sensorValue1 + analogRead(A1);                   // read the input on analog pin 1(DC Current)
-      delay(2);
-    }
-    if (sel == "AC")
-    {
-      sensorValue1 = sensorValue1 + analogRead(A3);                   // read the input on analog pin 3(AC Current)
-      delay(2);
-    }
+    sensorValue1 = sensorValue1 + analogRead(A1);                   // read the input on analog pin 1(DC Current)
+    delay(2);
     RunCount = RunCount + 1;
-   }
-  sensorValue1 = sensorValue1 / RunCount;
-  if (sel == "DC")
-  {
-    sensorValue1 = sensorValue1 - get_offset("DC");
-    current = bat_c(sensorValue1, "DC");
-    if (current < 0)
-    {
-      GridTime = GridTime + millis() - previousMillis0;
-    }
-
   }
-  if (sel == "AC")
-  {
-    sensorValue1 = sensorValue1 - get_offset("AC");
-    current = bat_c(sensorValue1, "AC");
-    float Watts = 0;
-    Watts = current * 255;
-    unsigned int time = millis() - previousMillis0;
-    float WM = Watts * time;
-    KWH = KWH + WM;
-    if (GridTime != 0)
-    {
-    previousMillis0 = GridTime;
-    }
-   }
+  sensorValue1 = sensorValue1 / RunCount;
+  sensorValue1 = sensorValue1 - DcOffset ;
+  current = sensorValue1 * SysampsDC;
+  current = current * DCcalf;
   return current;
 }
-//*******************************************************
-//Functions to calculate volts and amps equivalent
-//Do not modify unless explicitly defined by a comment
-//*******************************************************
-float bat_v (int x)
-{
-  float ret_bat = x * (EEPROM.read(21) / 1024.00);
-  return ret_bat;
-}
 
-float bat_c (int x, String sel)
+float avg_currentAc(float SysampsAC, float ACcalf, int ACOffset, byte ACerror)
 {
-  if (sel == "DC")
+  float current = 0;
+  int RunCount = 0;
+  int sensorValue1 = 0;
+  unsigned long previousMillis = millis();
+  while (millis() - previousMillis < 100)
   {
-    float ret_c = x * (EEPROM.read(22) / 1024.00);
-    float calf = EEPROM.read(40) / 100.00;
-    calf = calf + EEPROM.read(39);
-    ret_c = ret_c * calf;
-    return ret_c;
+    sensorValue1 = sensorValue1 + analogRead(A3);                   // read the input on analog pin 3(AC Current)
+    delay(2);
+    RunCount = RunCount + 1;
   }
-  if (sel == "AC")
+  sensorValue1 = sensorValue1 / RunCount;
+  sensorValue1 = sensorValue1 - ACOffset ;
+  if (sensorValue1 <= ACerror)
   {
-    if (x <= EEPROM.read(43))
-    {
-      return 0;
-    }
-    float ret_c = EEPROM.read(30) / 1024.00;
-    ret_c = x * ret_c;
-    float calf = EEPROM.read(42) / 100.00;
-    calf = calf + EEPROM.read(41);
-    ret_c = ret_c * calf;
-    return ret_c;
+    return 0;
   }
+  current = sensorValue1 * SysampsAC;
+  current = current * ACcalf;
+  return current;
 }
 
 //*******************************************************
