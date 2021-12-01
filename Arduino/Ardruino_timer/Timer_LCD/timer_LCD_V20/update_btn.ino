@@ -1,9 +1,9 @@
 //**************************************************************************
 // Function to change the paramet valube when UP or Down buttin is presses
 //**************************************************************************
-int update_btn(String button, unsigned int value, int valmax,int d)
+int update_btn(String button, unsigned int value, int valmax, int d)
 {
-  if(value < valmax)
+  if (value < valmax)
   {
     if (button == "Up")
     {
@@ -16,11 +16,11 @@ int update_btn(String button, unsigned int value, int valmax,int d)
       delay(d);
     }
   }
-  if(value >= valmax)
+  if (value >= valmax)
   {
     if (button == "Down")
     {
-      value = valmax -1;
+      value = valmax - 1;
       delay(d);
     }
     else
@@ -28,5 +28,3 @@ int update_btn(String button, unsigned int value, int valmax,int d)
   }
   return value;
 }
-
-

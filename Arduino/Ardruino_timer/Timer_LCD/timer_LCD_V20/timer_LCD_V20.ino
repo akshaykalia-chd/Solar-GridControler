@@ -1,5 +1,5 @@
 //******************************************************************//
-//Board configuration 
+//Board configuration
 //This function is used for configuration various board parameters
 //*****************************************************************//
 #include <Wire.h>
@@ -20,7 +20,7 @@ void setup()
     sysconfig();
     setSyncProvider(RTC.get);
   }
-  while (timeStatus()!= timeSet)
+  while (timeStatus() != timeSet)
   {
     lcd.print("RTC Err");
     delay(2000);
@@ -41,16 +41,9 @@ void loop()
   GridTime = 0;
   KWH = 0;
   char cont = 'a';
-  while(cont != 'x')
+  while (cont != 'x')
   {
-  activate_relay();
-  Alarm();
+    activate_relay();
+    Alarm();
   }
 }
-
-
-
-
-
-
-
