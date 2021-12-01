@@ -12,24 +12,26 @@ byte activate_relay(float volts, float CutOffVolts, byte RelayOn, int OnTime, in
     if (volts < CutOffVolts)
     {
       digitalWrite(13, HIGH);
-      //Serial.println("Relay On Vlots condtion meet");
+      Serial.println("Vlots condtion meet");
       return 1;
     }
-    int HH = hour();
-    int MM = minute();
-    int cTime = HH * 100;
-    cTime = cTime + MM;
-    if (cTime >= OnTime && cTime <= OffTime)
+    if (OnTime != 0 && OffTime != 0)
     {
-      digitalWrite(13, HIGH);
-      //Serial.println("Relay On Timer condtion meet");
-      return 2;
-    }
-    if (cTime >= OnTime && OffTime <= OnTime)
-    {
-      digitalWrite(13, HIGH);
-      //Serial.println("Relay On Timer condtion meet");
-      return 2;
+      int HH = hour() * 100;
+      int MM = minute();
+      int cTime = HH + MM;
+      if (cTime >= OnTime && cTime < OffTime)
+      {
+        digitalWrite(13, HIGH);
+        Serial.println("Timer condtion1 meet");
+        return 2;
+      }
+      if (cTime >= OnTime && OffTime < OnTime)
+      {
+        digitalWrite(13, HIGH);
+        Serial.println("Timer condtion2 meet");
+        return 2;
+      }
     }
   }
   return RelayOn;
@@ -47,7 +49,7 @@ byte deactivate_relay(float amps, float CutOffApms, unsigned long SogMorning, un
     if (mamps < CutOffApms)
     {
       digitalWrite(13, LOW);
-      //Serial.println("Amps condtion meet");
+      Serial.println("Amps condtion meet");
       return 0;
     }
     if (hour() >= 07 && hour() <= 16)
@@ -55,14 +57,14 @@ byte deactivate_relay(float amps, float CutOffApms, unsigned long SogMorning, un
       if (elaptime > SogMorning)
       {
         digitalWrite(13, LOW);
-        //Serial.println("SOGMorning condtion meet");
+        Serial.println("SOGMorning condtion meet");
         return 0;
       }
     }
     if (elaptime > SogNight)
     {
       digitalWrite(13, LOW);
-      //Serial.println("SOGNight condtion meet");
+      Serial.println("SOGNight condtion meet");
       return 0;
     }
   }
@@ -75,9 +77,7 @@ byte deactivate_relay(float amps, float CutOffApms, unsigned long SogMorning, un
     if (cTime == OffTime)
     {
       digitalWrite(13, LOW);
-      //Serial.println("offtime reached");
-      //Serial.println(OffTime);
-      //Serial.println(cTime);
+      Serial.println("offtime reached");
       return 0;
     }
   }

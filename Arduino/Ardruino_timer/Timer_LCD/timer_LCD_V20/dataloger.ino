@@ -1,9 +1,9 @@
 //*******************************************************
 //Function to log data using Serial line monitoring over usb
 //*******************************************************
-void datalog(byte RelayOn, float amps, float volts, float ampsac, int OnDay, int OnMonth, int OnHour, int OnMinute, float KWH, float GridTime, float CutOffVolts, float CutOffApms, unsigned long SogMorning, unsigned long SogNight, float sysvoltsdc, float SysampsDC, float SysampsAC, byte NoOfTimers, int ACOffset, int DcOffset, float ACcalf, float DCcalf, byte ACerror, int onTime1, int offTime1, int onTime2, int offTime2, int onTime3, int offTime3, int onTime4, int offTime4, int onTime5, int offTime5) //function to print data on usb
+void datalog(byte datalogset,byte RelayOn, float amps, float volts, float ampsac, int OnDay, int OnMonth, int OnHour, int OnMinute, float KWH, float GridTime, float CutOffVolts, float CutOffApms, unsigned long SogMorning, unsigned long SogNight, float sysvoltsdc, float SysampsDC, float SysampsAC, byte NoOfTimers, int ACOffset, int DcOffset, float ACcalf, float DCcalf, byte ACerror, int onTime1, int offTime1, int onTime2, int offTime2, int onTime3, int offTime3, int onTime4, int offTime4, int onTime5, int offTime5) //function to print data on usb
 {
-  if (EEPROM.read(29) == 1)
+  if (datalogset == 1)
   {
     Serial.print(day());
     Serial.print("/");
@@ -93,6 +93,8 @@ void datalog(byte RelayOn, float amps, float volts, float ampsac, int OnDay, int
     Serial.print(onTime5);
     Serial.print(",");
     Serial.print(offTime5);
+    Serial.print(",");
+    Serial.print("14");
     Serial.println();
   }
 }
