@@ -1,57 +1,85 @@
 //*******************************************************
 //Function to activate relay
 //Do not modify unless explicitly defined by a comment
+//RelayOn = 0 = Relay is off
+//RelayOn = 1 = Relay is On Voltage trigred
+//RelayOn = 2 = Relay is On Timer trigred
 //*******************************************************
-void activate_relay(byte PageNo,float CutOffVolts,float CutOffApms,unsigned long SogMorning,unsigned long SogNight,int OnDay, int OnMonth, int OnHour, int OnMinute)
+byte activate_relay(float volts, float CutOffVolts, byte RelayOn, int OnTime, int OffTime)
 {
-  unsigned long previousMillis = millis();
-  float volts = avg_voltage();
-  float amps = avg_current("DC");
-  float ampsac = avg_current("AC");
-  float mamps = 0;
-  digitalWrite(13, LOW);
-  boolean RelayOn = false;
-  lcd_Display(amps, volts, "Off", ampsac,PageNo,OnDay, OnMonth, OnHour, OnMinute);
-  datalog("Off", amps, ampsac, volts,OnDay, OnMonth, OnHour, OnMinute);
-  if (volts < CutOffVolts)
+  if (RelayOn == 0)
   {
-    digitalWrite(13, HIGH);
-    RelayOn = true;
-    while (millis() - previousMillis < 30000)
+    if (volts < CutOffVolts)
     {
-      volts = avg_voltage();
-      amps = avg_current("DC");
-      ampsac = avg_current("AC");
-      lcd_Display(amps, volts, "On", ampsac,PageNo,OnDay, OnMonth, OnHour, OnMinute);
-      datalog("On", amps, ampsac, volts,OnDay, OnMonth, OnHour, OnMinute);
-      mamps = amps * (-1); //Moded amps
+      digitalWrite(13, HIGH);
+      //Serial.println("Relay On Vlots condtion meet");
+      return 1;
     }
-    while (RelayOn == true)
+    int HH = hour();
+    int MM = minute();
+    int cTime = HH * 100;
+    cTime = cTime + MM;
+    if (cTime >= OnTime && cTime <= OffTime)
     {
-      lcd_Display(amps, volts, "On", ampsac,PageNo,OnDay, OnMonth, OnHour, OnMinute);
-      datalog("On", amps, ampsac, volts,OnDay, OnMonth, OnHour, OnMinute);
-      volts = avg_voltage();
-      amps = avg_current("DC");
-      ampsac = avg_current("AC");
-      float mamps = amps * (-1); //moded amps
-      if (mamps < CutOffApms)
-      {
-        digitalWrite(13, LOW);
-        RelayOn = false;
-      }
-      if (hour() >= 07 && hour() <= 16)
-      {
-        if (millis() - previousMillis > SogMorning)
-        {
-          digitalWrite(13, LOW);
-          RelayOn = false;
-        }
-      }
-      if (millis() - previousMillis > SogNight)
-      {
-        digitalWrite(13, LOW);
-        RelayOn = false;
-      }
+      digitalWrite(13, HIGH);
+      //Serial.println("Relay On Timer condtion meet");
+      return 2;
+    }
+    if (cTime >= OnTime && OffTime <= OnTime)
+    {
+      digitalWrite(13, HIGH);
+      //Serial.println("Relay On Timer condtion meet");
+      return 2;
     }
   }
+  return RelayOn;
+}
+
+//*******************************************************
+//Function to deactivate relay
+//Do not modify unless explicitly defined by a comment
+//*******************************************************
+byte deactivate_relay(float amps, float CutOffApms, unsigned long SogMorning, unsigned long SogNight, byte RelayOn, unsigned long elaptime, int OffTime)
+{
+  if (RelayOn == 1)
+  {
+    float mamps = amps * (-1); //moded amps
+    if (mamps < CutOffApms)
+    {
+      digitalWrite(13, LOW);
+      //Serial.println("Amps condtion meet");
+      return 0;
+    }
+    if (hour() >= 07 && hour() <= 16)
+    {
+      if (elaptime > SogMorning)
+      {
+        digitalWrite(13, LOW);
+        //Serial.println("SOGMorning condtion meet");
+        return 0;
+      }
+    }
+    if (elaptime > SogNight)
+    {
+      digitalWrite(13, LOW);
+      //Serial.println("SOGNight condtion meet");
+      return 0;
+    }
+  }
+  if (RelayOn == 2)
+  {
+    int HH = hour();
+    int MM = minute();
+    int cTime = HH * 100;
+    cTime = cTime + MM;
+    if (cTime == OffTime)
+    {
+      digitalWrite(13, LOW);
+      //Serial.println("offtime reached");
+      //Serial.println(OffTime);
+      //Serial.println(cTime);
+      return 0;
+    }
+  }
+  return RelayOn;
 }

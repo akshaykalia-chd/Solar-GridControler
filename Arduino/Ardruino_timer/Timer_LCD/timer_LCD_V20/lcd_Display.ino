@@ -1,7 +1,7 @@
 //*******************************************************
 //Function to display data on LCD
 //*******************************************************
-void lcd_Display(float amps, float volts, String Rstate, float ampsac, byte PageNo, int OnDay, int OnMonth, int OnHour, int OnMinute)
+void lcd_Display(byte RelayOn, float amps, float volts, float ampsac, byte PageNo, int OnDay, int OnMonth, int OnHour, int OnMinute, float KWH, float GridTime, float CutOffVolts, float CutOffApms, unsigned long SogMorning, unsigned long SogNight, float sysvoltsdc, float SysampsDC, float SysampsAC)
 {
   if (PageNo == 0)
   {
@@ -9,7 +9,7 @@ void lcd_Display(float amps, float volts, String Rstate, float ampsac, byte Page
     lcd.print("IM4S SSGMC M-1");
     lcd.print("            ");
     lcd.setCursor(0, 1);
-    lcd.print("Code Build:12");
+    lcd.print("Code Build:13");
     lcd.print("             ");
   }
   if (PageNo == 1)
@@ -41,11 +41,9 @@ void lcd_Display(float amps, float volts, String Rstate, float ampsac, byte Page
     lcd.print(runtime);
     lcd.print("         ");
     lcd.setCursor(0, 1);
-    lcd.print("DC:");
     lcd.print(volts);
     lcd.print("V");
     lcd.print(" ");
-    lcd.print("DC:");
     lcd.print(amps);
     lcd.print("A");
     lcd.print("             ");
@@ -65,57 +63,72 @@ void lcd_Display(float amps, float volts, String Rstate, float ampsac, byte Page
   if (PageNo == 5)
   {
     lcd.setCursor(0, 0);
-    lcd.print("Grid Supply:");
-    lcd.print(Rstate);
+    lcd.print("Grid:");
+    if (RelayOn == 0)
+    {
+      lcd.print("Off");
+    }
+    if (RelayOn == 1)
+    {
+      lcd.print("On");
+    }
+    if (RelayOn == 2)
+    {
+      lcd.print("Timer");
+    }
     lcd.print("         ");
     lcd.setCursor(0, 1);
     lcd.print("On Volts:");
-    lcd.print(EEPROM.read(23));
-    lcd.print(".");
-    lcd.print(EEPROM.read(24));
+    lcd.print(CutOffVolts);
     lcd.print("         ");
   }
   if (PageNo == 6)
   {
     lcd.setCursor(0, 0);
     lcd.print("Off Amps:");
-    lcd.print(EEPROM.read(25));
-    lcd.print(".");
-    lcd.print(EEPROM.read(26));
+    lcd.print(CutOffApms);
     lcd.print("         ");
     lcd.setCursor(0, 1);
     lcd.print("SOG PM(M):");
-    lcd.print(EEPROM.read(28));
+    lcd.print(SogMorning / 60000);
     lcd.print("         ");
   }
   if (PageNo == 7)
   {
     lcd.setCursor(0, 0);
     lcd.print("SOG AM(M):");
-    lcd.print(EEPROM.read(27));
+    lcd.print(SogNight / 60000);
     lcd.print("         ");
     lcd.setCursor(0, 1);
     lcd.print("Sys Amps DC:");
-    lcd.print(EEPROM.read(22));
+    lcd.print(SysampsDC * 1024);
     lcd.print("         ");
   }
   if (PageNo == 8)
   {
     lcd.setCursor(0, 0);
-    lcd.print("Sys Volts:");
-    lcd.print(EEPROM.read(21));
+    lcd.print("Sys Volts DC:");
+    lcd.print(sysvoltsdc * 1024);
     lcd.print("         ");
     lcd.setCursor(0, 1);
     lcd.print("Sys Amps AC:");
-    lcd.print(EEPROM.read(30));
+    lcd.print(SysampsAC * 1024);
     lcd.print("         ");
   }
   if (PageNo == 9)
   {
     lcd.setCursor(0, 0);
     lcd.print("On Date:");
+    lcd.print(OnDay);
+    lcd.print("/");
+    lcd.print(OnMonth);
+    lcd.print("         ");
     lcd.setCursor(0, 1);
     lcd.print("On Time:");
+    lcd.print(OnHour);
+    lcd.print(":");
+    lcd.print(OnMinute);
+    lcd.print("         ");
   }
 }
 //*******************************************************
@@ -125,6 +138,7 @@ void lcd_Display(float amps, float volts, String Rstate, float ampsac, byte Page
 void digitalClockDisplay() // digital clock display of the time
 {
   lcd.setCursor(0, 0);
+  lcd.print("   ");
   printDigits(day());
   lcd.print("/");
   printDigits(month());
@@ -132,6 +146,7 @@ void digitalClockDisplay() // digital clock display of the time
   printDigits(year());
   lcd.print("         ");
   lcd.setCursor(0, 1);
+  lcd.print("    ");
   printDigits(hour());
   lcd.print(":");
   printDigits(minute());

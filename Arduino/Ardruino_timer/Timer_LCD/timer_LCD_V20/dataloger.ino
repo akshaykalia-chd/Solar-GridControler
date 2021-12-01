@@ -1,11 +1,10 @@
 //*******************************************************
 //Function to log data using Serial line monitoring over usb
 //*******************************************************
-void datalog(String RelayStatus, float amps, float aamps, float volts,int OnDay, int OnMonth, int OnHour, int OnMinute) //function to print data on usb
+void datalog(byte RelayOn, float amps, float volts, float ampsac, int OnDay, int OnMonth, int OnHour, int OnMinute, float KWH, float GridTime, float CutOffVolts, float CutOffApms, unsigned long SogMorning, unsigned long SogNight, float sysvoltsdc, float SysampsDC, float SysampsAC, byte NoOfTimers, int ACOffset, int DcOffset, float ACcalf, float DCcalf, byte ACerror, int onTime1, int offTime1, int onTime2, int offTime2, int onTime3, int offTime3, int onTime4, int offTime4, int onTime5, int offTime5) //function to print data on usb
 {
   if (EEPROM.read(29) == 1)
   {
-    byte NoOffTimers = EEPROM.read(0);
     Serial.print(day());
     Serial.print("/");
     Serial.print(month());
@@ -22,45 +21,48 @@ void datalog(String RelayStatus, float amps, float aamps, float volts,int OnDay,
     Serial.print(",");
     Serial.print(volts);
     Serial.print(",");
-    Serial.print(aamps);
+    Serial.print(ampsac);
     Serial.print(",");
-    Serial.print(KWH/3600000000);
+    Serial.print(KWH / 3600000000);
     Serial.print(",");
-    Serial.print(GridTime/60000);
+    Serial.print(GridTime / 60000);
     Serial.print(",");
-    Serial.print(EEPROM.read(27));
+    Serial.print(SogMorning / 60000);
     Serial.print(",");
-    Serial.print(EEPROM.read(28));
+    Serial.print(SogNight / 60000);
     Serial.print(",");
-    Serial.print(EEPROM.read(25));
-    Serial.print(".");
-    Serial.print(EEPROM.read(26));
+    Serial.print(CutOffApms);
     Serial.print(",");
-    Serial.print(EEPROM.read(23));
-    Serial.print(".");
-    Serial.print(EEPROM.read(24));
+    Serial.print(CutOffVolts);
     Serial.print(",");
-    Serial.print(EEPROM.read(21));
+    Serial.print(sysvoltsdc * 1024);
     Serial.print(",");
-    Serial.print(EEPROM.read(22));
+    Serial.print(SysampsDC * 1024);
     Serial.print(",");
-    Serial.print(EEPROM.read(30));
+    Serial.print(SysampsAC * 1024);
     Serial.print(",");
-    Serial.print(RelayStatus);
+    if (RelayOn == 0)
+    {
+      Serial.print("Off");
+    }
+    if (RelayOn == 1)
+    {
+      Serial.print("On");
+    }
+    if (RelayOn == 2)
+    {
+      Serial.print("Timer");
+    }
     Serial.print(",");
-    Serial.print(get_offset("AC"));
+    Serial.print(ACOffset);
     Serial.print(",");
-    Serial.print(get_offset("DC"));
+    Serial.print(DcOffset);
     Serial.print(",");
-    Serial.print(EEPROM.read(39));
-    Serial.print(".");
-    Serial.print(EEPROM.read(40));
+    Serial.print(DCcalf);
     Serial.print(",");
-    Serial.print(EEPROM.read(41));
-    Serial.print(".");
-    Serial.print(EEPROM.read(42));
+    Serial.print(ACcalf);
     Serial.print(",");
-    Serial.print(EEPROM.read(43));
+    Serial.print(ACerror);
     Serial.print(",");
     Serial.print(OnDay);
     Serial.print("/");
@@ -69,20 +71,28 @@ void datalog(String RelayStatus, float amps, float aamps, float volts,int OnDay,
     Serial.print(OnHour);
     Serial.print(":");
     Serial.print(OnMinute);
-    Serial.print(NoOffTimers);
-    for (int i = 0; i < NoOffTimers; i++)
-    {
-      byte addr = i + 1;
-      byte addr1 = addr + NoOffTimers;
-      byte addr2 = addr1 + NoOffTimers;
-      byte addr3 = addr2 + NoOffTimers;
-      Serial.print(",");
-      Serial.print(EEPROM.read(addr));
-      Serial.print(EEPROM.read(addr1));
-      Serial.print(",");
-      Serial.print(EEPROM.read(addr2));
-      Serial.print(EEPROM.read(addr3));
-    }
+    Serial.print(",");
+    Serial.print(NoOfTimers);
+    Serial.print(",");
+    Serial.print(onTime1);
+    Serial.print(",");
+    Serial.print(offTime1);
+    Serial.print(",");
+    Serial.print(onTime2);
+    Serial.print(",");
+    Serial.print(offTime2);
+    Serial.print(",");
+    Serial.print(onTime3);
+    Serial.print(",");
+    Serial.print(offTime3);
+    Serial.print(",");
+    Serial.print(onTime4);
+    Serial.print(",");
+    Serial.print(offTime4);
+    Serial.print(",");
+    Serial.print(onTime5);
+    Serial.print(",");
+    Serial.print(offTime5);
     Serial.println();
   }
 }

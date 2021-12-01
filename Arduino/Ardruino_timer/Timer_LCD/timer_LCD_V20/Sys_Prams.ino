@@ -84,21 +84,21 @@ int get_offset(String sel)
   byte b3 = 0;
   byte b4 = 0;
   if (sel == "DC")
-    {
+  {
     b1 = EEPROM.read(31);
     b2 = EEPROM.read(32);
     b3 = EEPROM.read(33);
     b4 = EEPROM.read(34);
-    }
+  }
   if (sel == "AC")
-    {
+  {
     b1 = EEPROM.read(35);
     b2 = EEPROM.read(36);
     b3 = EEPROM.read(37);
     b4 = EEPROM.read(38);
-    }
-int offset = b1 + b2 + b3 + b4;
-return offset;
+  }
+  int offset = b1 + b2 + b3 + b4;
+  return offset;
 }
 
 void set_offset(String sel, int offset)
@@ -142,5 +142,30 @@ void set_offset(String sel, int offset)
     EEPROM.write(36, b2);
     EEPROM.write(37, b3);
     EEPROM.write(38, b4);
+  }
+}
+//*******************************************************
+//Function to get Ontime and OffTime for timers
+//Do not modify unless explicitly defined by a comment
+//*******************************************************
+int get_timer(int timerNo, byte NoOfTimers, String sel)
+{
+  byte addr = timerNo + 1;
+  byte addr1 = addr + NoOfTimers;
+  byte addr2 = addr1 + NoOfTimers;
+  byte addr3 = addr2 + NoOfTimers;
+  if (sel == "OnTime")
+  {
+    int OnTime = EEPROM.read(addr); //OnHours
+    OnTime = OnTime * 100;
+    OnTime = OnTime + EEPROM.read(addr1); // On Mins
+    return OnTime;
+  }
+  if (sel == "OffTime")
+  {
+    int OffTime = EEPROM.read(addr2); // Off Hours
+    OffTime = OffTime * 100;
+    OffTime = OffTime + EEPROM.read(addr3); // Off Mins
+    return OffTime;
   }
 }
