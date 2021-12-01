@@ -11,4 +11,3 @@ void set_sog()
   EEPROM.write(27,sogM);
   EEPROM.write(28,sogN);
 }
-
