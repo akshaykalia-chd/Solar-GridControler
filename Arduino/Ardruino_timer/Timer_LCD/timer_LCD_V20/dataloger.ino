@@ -1,7 +1,7 @@
 //*******************************************************
 //Function to log data using Serial line monitoring over usb
 //*******************************************************
-void datalog(byte datalogset,byte RelayOn, float amps, float volts, float ampsac, int OnDay, int OnMonth, int OnHour, int OnMinute, float KWH, float GridTime, float CutOffVolts, float CutOffApms, unsigned long SogMorning, unsigned long SogNight, float sysvoltsdc, float SysampsDC, float SysampsAC, byte NoOfTimers, int ACOffset, int DcOffset, float ACcalf, float DCcalf, byte ACerror, int onTime1, int offTime1, int onTime2, int offTime2, int onTime3, int offTime3, int onTime4, int offTime4, int onTime5, int offTime5) //function to print data on usb
+void datalog(byte datalogset,byte RelayOn, float amps, float volts, float ampsac, int OnDay, int OnMonth, int OnHour, int OnMinute, float KWH, unsigned long GridTime, float CutOffVolts, float CutOffApms, byte SogMorning, byte SogNight, float sysvoltsdc, float SysampsDC, float SysampsAC, byte NoOfTimers, int ACOffset, int DcOffset, float ACcalf, float DCcalf, byte ACerror, int onTime1, int offTime1, int onTime2, int offTime2, int onTime3, int offTime3, int onTime4, int offTime4, int onTime5, int offTime5) //function to print data on usb
 {
   if (datalogset == 1)
   {
@@ -23,23 +23,23 @@ void datalog(byte datalogset,byte RelayOn, float amps, float volts, float ampsac
     Serial.print(",");
     Serial.print(ampsac);
     Serial.print(",");
-    Serial.print(KWH / 3600000000);
+    Serial.print(KWH / 3600000000.00);
     Serial.print(",");
-    Serial.print(GridTime / 60000);
+    Serial.print(GridTime / 60000.00);
     Serial.print(",");
-    Serial.print(SogMorning / 60000);
+    Serial.print(SogMorning);
     Serial.print(",");
-    Serial.print(SogNight / 60000);
+    Serial.print(SogNight);
     Serial.print(",");
     Serial.print(CutOffApms);
     Serial.print(",");
     Serial.print(CutOffVolts);
     Serial.print(",");
-    Serial.print(sysvoltsdc * 1024);
+    Serial.print(sysvoltsdc * 1024.00);
     Serial.print(",");
-    Serial.print(SysampsDC * 1024);
+    Serial.print(SysampsDC * 1024.00);
     Serial.print(",");
-    Serial.print(SysampsAC * 1024);
+    Serial.print(SysampsAC * 1024.00);
     Serial.print(",");
     if (RelayOn == 0)
     {
@@ -94,7 +94,7 @@ void datalog(byte datalogset,byte RelayOn, float amps, float volts, float ampsac
     Serial.print(",");
     Serial.print(offTime5);
     Serial.print(",");
-    Serial.print("14");
+    Serial.print("15");
     Serial.println();
   }
 }

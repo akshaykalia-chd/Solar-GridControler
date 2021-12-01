@@ -1,7 +1,7 @@
 //*******************************************************
 //Function to display data on LCD
 //*******************************************************
-void lcd_Display(byte RelayOn, float amps, float volts, float ampsac, byte PageNo, int OnDay, int OnMonth, int OnHour, int OnMinute, float KWH, float GridTime, float CutOffVolts, float CutOffApms, unsigned long SogMorning, unsigned long SogNight, float sysvoltsdc, float SysampsDC, float SysampsAC)
+void lcd_Display(byte RelayOn, float amps, float volts, float ampsac, byte PageNo, int OnDay, int OnMonth, int OnHour, int OnMinute, float KWH, unsigned long GridTime, float CutOffVolts, float CutOffApms, byte SogMorning, byte SogNight, float sysvoltsdc, float SysampsDC, float SysampsAC)
 {
   if (PageNo == 0)
   {
@@ -9,7 +9,7 @@ void lcd_Display(byte RelayOn, float amps, float volts, float ampsac, byte PageN
     lcd.print("IM4S SSGMC M-2");
     lcd.print("            ");
     lcd.setCursor(0, 1);
-    lcd.print("Code Build:14");
+    lcd.print("Code Build:15");
     lcd.print("             ");
   }
   if (PageNo == 1)
@@ -90,29 +90,29 @@ void lcd_Display(byte RelayOn, float amps, float volts, float ampsac, byte PageN
     lcd.print("         ");
     lcd.setCursor(0, 1);
     lcd.print("SOG PM(M):");
-    lcd.print(SogMorning / 60000);
+    lcd.print(SogMorning);
     lcd.print("         ");
   }
   if (PageNo == 7)
   {
     lcd.setCursor(0, 0);
     lcd.print("SOG AM(M):");
-    lcd.print(SogNight / 60000);
+    lcd.print(SogNight);
     lcd.print("         ");
     lcd.setCursor(0, 1);
     lcd.print("Sys Amps DC:");
-    lcd.print(SysampsDC * 1024);
+    lcd.print(SysampsDC * 1024.00);
     lcd.print("         ");
   }
   if (PageNo == 8)
   {
     lcd.setCursor(0, 0);
     lcd.print("Sys Volts DC:");
-    lcd.print(sysvoltsdc * 1024);
+    lcd.print(sysvoltsdc * 1024.00);
     lcd.print("         ");
     lcd.setCursor(0, 1);
     lcd.print("Sys Amps AC:");
-    lcd.print(SysampsAC * 1024);
+    lcd.print(SysampsAC * 1024.00);
     lcd.print("         ");
   }
   if (PageNo == 9)

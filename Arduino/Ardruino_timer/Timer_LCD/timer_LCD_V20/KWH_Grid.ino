@@ -3,11 +3,11 @@ Functions to calculate KWH and Grite time
 All calculations of time in milisecomds
 ********************************************************/
 
-float Cal_Gridtime(float amps, unsigned long previousMillis)
+unsigned long Cal_Gridtime(float amps, unsigned long previousMillis)
 {
   if (amps < 0)
   {
-    float gtime = millis() - previousMillis;
+    unsigned int gtime = millis() - previousMillis;
     return gtime;
   }
   return 0;
