@@ -38,51 +38,24 @@ void Alarm()
 
 void relay_on(int cT, int oT, float cAmps)
 {
-  while (cT != oT)
+  if (cT != oT)
   {
     unsigned long previousMillis = millis();
     digitalWrite(13, HIGH);
-    float volts = avg_voltage();
-    float amps = avg_current("DC");
-    cal_gridtime(amps, previousMillis);
-    float ampsac = avg_current("AC");
-    float mamps = 0;
-    lcd_Display(amps, volts, "On", ampsac);
-    datalog("On", amps, ampsac, volts);
-    while (millis() - previousMillis < 30000)
+    while (cT != oT)
     {
-      volts = avg_voltage();
-      amps = avg_current("DC");
-      cal_gridtime(amps, previousMillis);
-      ampsac = avg_current("AC");
+      float volts = avg_voltage();
+      float amps = avg_current("DC");
+      float ampsac = avg_current("AC");
+      float mamps = 0;
       lcd_Display(amps, volts, "On", ampsac);
       datalog("On", amps, ampsac, volts);
-      mamps = amps * (-1); //Moded amps
-    }
-    if (mamps < cAmps)
-    {
-      digitalWrite(13, LOW);
       int HH = hour();
       int MM = minute();
-      int cTime = HH * 100;
-      cTime = cTime + MM;
-      while (cTime != oT)
-      {
-        previousMillis = millis();
-        float CutOffVolts = EEPROM.read(24) / 100;
-        CutOffVolts = CutOffVolts + EEPROM.read(23);
-        volts = avg_voltage();
-        amps = avg_current("DC");
-        cal_gridtime(amps, previousMillis);
-        ampsac = avg_current("AC");
-        lcd_Display(amps, volts, "Off", ampsac);
-        datalog("Off", amps, ampsac, volts);
-        if (volts < CutOffVolts)
-        {
-          return;
-        }
-      }
+      cT = HH * 100;
+      cT = cT + MM;
     }
+    digitalWrite(13, LOW);
   }
 }
 

@@ -1,6 +1,6 @@
 //*******************************************************
-//Function to setup System Voltage
-//EPROM Address 27 and 28
+//Function to setup SOG (Stay On grid time)
+//EEPROM Address 27 and 28
 //*******************************************************
 void set_sog()
 {

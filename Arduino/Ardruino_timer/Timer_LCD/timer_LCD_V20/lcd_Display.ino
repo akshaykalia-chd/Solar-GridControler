@@ -7,18 +7,18 @@ void lcd_Display(float amps, float volts, String Rstate, float ampsac)
   {
     lcd.setCursor(0, 0);
     lcd.print("KWH,A:");
-    lcd.print(KWH);
+    lcd.print(KWH/3600000000);
     lcd.print(",");
     lcd.print(ampsac);
     lcd.print("            ");
     lcd.setCursor(0, 1);
     lcd.print("TGT(M):");
-    lcd.print(GridTime);
+    lcd.print(GridTime/60000);
     lcd.print("        ");
   }
   if (button() == "None")
   {
-    float runtime = 100 / amps;
+    int runtime = 100 / amps;
     runtime = runtime * 0.4;
     lcd.setCursor(0, 0);
     if (runtime < 0)
@@ -35,7 +35,7 @@ void lcd_Display(float amps, float volts, String Rstate, float ampsac)
     lcd.print(" ");
     lcd.print(amps);
     lcd.print("A");
-    lcd.print("     ");
+    lcd.print("      ");
   }
   if (button() == "Right")
   {
@@ -112,5 +112,3 @@ void printDigits(int digits)
   }
   lcd.print(digits);
 }
-
-

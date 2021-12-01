@@ -8,8 +8,6 @@
 #include <LiquidCrystal.h>
 #include <EEPROM.h>
 LiquidCrystal lcd(8, 9, 4, 5, 6, 7); // LCD Pin interface
-long KWH = 0;
-unsigned int GridTime = 0;
 void setup()
 {
   pinMode(13, OUTPUT);
@@ -26,22 +24,23 @@ void setup()
     delay(2000);
     lcd.clear();
   }
+  lcd.print("Build: 10");
+  delay(2000);
   if (EEPROM.read(29) == 1)
   {
     Serial.begin(9600);
-    Serial.println();
-    Serial.println("Date,Time,Current(A),Voltage(V),Mains Current(A),KWH,Grid Time,SOG Time Morning(Min),SOG Time Night(Min),Cutoff Amps(A),Cutoff Volts(V),System Volts(V),System Amps(A),Grid Supply,Timers#,On Time1,Off Time1,On Time2,Off Time2,On Time3,Off Time3,On Time4,Off Time4,On Time5,Off Time5");
+    Serial.println("Build: 10");
+    Serial.println("Date,Time,Current(A),Voltage(V),Mains Current(A),KWH,Grid Time(M),SOG Time Morning(Min),SOG Time Night(Min),Cutoff Amps(A),Cutoff Volts(V),System Volts(V),System DC Amps(A),System AC Amps(A),Grid Supply,AC offset,DC offset,DC Calibrations,AC Calibrations,AC Zero Offset,Timers#,On Time1,Off Time1,On Time2,Off Time2,On Time3,Off Time3,On Time4,Off Time4,On Time5,Off Time5");
   }
 }
 //*******************************************************
 //Main function this will be running in a infinite loop
 //*******************************************************
+float KWH = 0;
+float GridTime = 0;
 void loop()
 {
-  GridTime = 0;
-  KWH = 0;
-  char cont = 'a';
-  while (cont != 'x')
+  while (1)
   {
     activate_relay();
     Alarm();

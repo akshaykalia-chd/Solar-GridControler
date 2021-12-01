@@ -4,11 +4,9 @@
 //*******************************************************
 void activate_relay()
 {
-  unsigned long currentMillis = millis();
   unsigned long previousMillis = millis();
   float volts = avg_voltage();
   float amps = avg_current("DC");
-  cal_gridtime(amps, previousMillis);
   float ampsac = avg_current("AC");
   digitalWrite(13, LOW);
   lcd_Display(amps, volts, "Off", ampsac);
@@ -31,7 +29,6 @@ void activate_relay()
     {
       volts = avg_voltage();
       amps = avg_current("DC");
-      cal_gridtime(amps, previousMillis);
       ampsac = avg_current("AC");
       lcd_Display(amps, volts, "On", ampsac);
       datalog("On", amps, ampsac, volts);
@@ -39,12 +36,10 @@ void activate_relay()
     }
     while (RelayOn == true)
     {
-      currentMillis = millis();
       lcd_Display(amps, volts, "On", ampsac);
       datalog("On", amps, ampsac, volts);
       volts = avg_voltage();
       amps = avg_current("DC");
-      cal_gridtime(amps, currentMillis);
       ampsac = avg_current("AC");
       float mamps = amps * (-1); //moded amps
       if (mamps < CutOffApms)
@@ -54,13 +49,13 @@ void activate_relay()
       }
       if (hour() >= 07 && hour() <= 16)
       {
-        if (currentMillis - previousMillis > SogMorning)
+        if (millis() - previousMillis > SogMorning)
         {
           digitalWrite(13, LOW);
           RelayOn = false;
         }
       }
-      if (currentMillis - previousMillis > SogNight)
+      if (millis() - previousMillis > SogNight)
       {
         digitalWrite(13, LOW);
         RelayOn = false;
