@@ -1,26 +1,37 @@
 //*******************************************************
 //Function to display data on LCD
 //*******************************************************
-void lcd_Display(float amps, float volts, String Rstate, float ampsac)
+void lcd_Display(float amps, float volts, String Rstate, float ampsac, byte PageNo, int OnDay, int OnMonth, int OnHour, int OnMinute)
 {
-  if (button() == "Select")
+  if (PageNo == 0)
   {
     lcd.setCursor(0, 0);
-    lcd.print("KWH,A:");
-    lcd.print(KWH);
-    lcd.print(",");
-    lcd.print(ampsac);
+    lcd.print("IM4S SSGMC M-1");
     lcd.print("            ");
     lcd.setCursor(0, 1);
-    lcd.print("TGT(M):");
-    lcd.print(GridTime);
-    lcd.print("        ");
+    lcd.print("Code Build:12");
+    lcd.print("             ");
   }
-  if (button() == "None")
+  if (PageNo == 1)
   {
-    float runtime = 100 / amps;
-    runtime = runtime * 0.4;
+    digitalClockDisplay();
+  }
+  if (PageNo == 2)
+  {
     lcd.setCursor(0, 0);
+    lcd.print("KWH used:");
+    lcd.print(KWH / 3600000000);
+    lcd.print("           ");
+    lcd.setCursor(0, 1);
+    lcd.print("TGT(H):");
+    lcd.print(GridTime / 3600000);
+    lcd.print("           ");
+  }
+  if (PageNo == 3)
+  {
+    lcd.setCursor(0, 0);
+    int runtime = 100 / amps;
+    runtime = runtime * 0.4;
     if (runtime < 0)
     {
       lcd.print("Run Time(H):");
@@ -30,22 +41,41 @@ void lcd_Display(float amps, float volts, String Rstate, float ampsac)
     lcd.print(runtime);
     lcd.print("         ");
     lcd.setCursor(0, 1);
+    lcd.print("DC:");
     lcd.print(volts);
     lcd.print("V");
     lcd.print(" ");
+    lcd.print("DC:");
     lcd.print(amps);
     lcd.print("A");
-    lcd.print("     ");
+    lcd.print("             ");
   }
-  if (button() == "Right")
+  if (PageNo == 4)
   {
-    digitalClockDisplay(0, 0);
+    lcd.setCursor(0, 0);
+    lcd.print("AC Volts:255V");
+    lcd.print("             ");
     lcd.setCursor(0, 1);
+    lcd.print("AC Amps:");
+    lcd.print(ampsac);
+    lcd.print("A");
+    lcd.print("             ");
+  }
+
+  if (PageNo == 5)
+  {
+    lcd.setCursor(0, 0);
     lcd.print("Grid Supply:");
     lcd.print(Rstate);
     lcd.print("         ");
+    lcd.setCursor(0, 1);
+    lcd.print("On Volts:");
+    lcd.print(EEPROM.read(23));
+    lcd.print(".");
+    lcd.print(EEPROM.read(24));
+    lcd.print("         ");
   }
-  if (button() == "Left")
+  if (PageNo == 6)
   {
     lcd.setCursor(0, 0);
     lcd.print("Off Amps:");
@@ -54,51 +84,60 @@ void lcd_Display(float amps, float volts, String Rstate, float ampsac)
     lcd.print(EEPROM.read(26));
     lcd.print("         ");
     lcd.setCursor(0, 1);
-    lcd.print("Off Volts:");
-    lcd.print(EEPROM.read(23));
-    lcd.print(".");
-    lcd.print(EEPROM.read(24));
+    lcd.print("SOG PM(M):");
+    lcd.print(EEPROM.read(28));
     lcd.print("         ");
   }
-  if (button() == "Up")
+  if (PageNo == 7)
   {
     lcd.setCursor(0, 0);
     lcd.print("SOG AM(M):");
     lcd.print(EEPROM.read(27));
     lcd.print("         ");
     lcd.setCursor(0, 1);
-    lcd.print("SOG PM(M):");
-    lcd.print(EEPROM.read(28));
+    lcd.print("Sys Amps DC:");
+    lcd.print(EEPROM.read(22));
     lcd.print("         ");
   }
-  if (button() == "Down")
+  if (PageNo == 8)
   {
     lcd.setCursor(0, 0);
-    lcd.print("System Volts:");
+    lcd.print("Sys Volts:");
     lcd.print(EEPROM.read(21));
     lcd.print("         ");
     lcd.setCursor(0, 1);
-    lcd.print("System Amps:");
-    lcd.print(EEPROM.read(22));
+    lcd.print("Sys Amps AC:");
+    lcd.print(EEPROM.read(30));
     lcd.print("         ");
+  }
+  if (PageNo == 9)
+  {
+    lcd.setCursor(0, 0);
+    lcd.print("On Date:");
+    lcd.setCursor(0, 1);
+    lcd.print("On Time:");
   }
 }
 //*******************************************************
 //Function to display date and time
 //Do not modify unless explicitly defined by a comment
 //*******************************************************
-void digitalClockDisplay(int CN, int LN) // digital clock display of the time
+void digitalClockDisplay() // digital clock display of the time
 {
-  lcd.setCursor(CN, LN);
-  printDigits(hour());
-  lcd.print(":");
-  printDigits(minute());
-  lcd.print(" ");
+  lcd.setCursor(0, 0);
   printDigits(day());
   lcd.print("/");
   printDigits(month());
   lcd.print("/");
   printDigits(year());
+  lcd.print("         ");
+  lcd.setCursor(0, 1);
+  printDigits(hour());
+  lcd.print(":");
+  printDigits(minute());
+  lcd.print(":");
+  printDigits(second());
+  lcd.print("         ");
 }
 //*******************************************************
 // utility function prints preceding colon and leading 0 for date and time
@@ -112,5 +151,3 @@ void printDigits(int digits)
   }
   lcd.print(digits);
 }
-
-
