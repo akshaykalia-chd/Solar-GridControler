@@ -6,10 +6,10 @@ void lcd_Display(byte RelayOn, float amps, float volts, float ampsac, byte PageN
   if (PageNo == 0)
   {
     lcd.setCursor(0, 0);
-    lcd.print("IM4S SSGMC M-2");
+    lcd.print("IM4S SSGMC M-3");
     lcd.print("            ");
     lcd.setCursor(0, 1);
-    lcd.print("Code Build:15");
+    lcd.print("Code Build:16");
     lcd.print("             ");
   }
   if (PageNo == 1)

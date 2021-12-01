@@ -8,7 +8,7 @@ void sysconfig()
     {
       case 0:
         update_sel("Set Time");
-        sel = update_btn(button(), sel, 7, 250);
+        sel = update_btn(button(), sel, 9, 250);
         if (button() == "Select")
         {
           delay (250);
@@ -17,7 +17,7 @@ void sysconfig()
         break;
       case 1:
         update_sel("Setup Timers");
-        sel = update_btn(button(), sel, 7, 250);
+        sel = update_btn(button(), sel, 9, 250);
         if (button() == "Select")
         {
           delay (250);
@@ -26,7 +26,7 @@ void sysconfig()
         break;
       case 2:
         update_sel("System Parameter");
-        sel = update_btn(button(), sel, 7, 250);
+        sel = update_btn(button(), sel, 9, 250);
         if (button() == "Select")
         {
           delay (250);
@@ -42,7 +42,7 @@ void sysconfig()
         break;
       case 3:
         update_sel("Cut Offs");
-        sel = update_btn(button(), sel, 7, 250);
+        sel = update_btn(button(), sel, 9, 250);
         if (button() == "Select")
         {
           delay (250);
@@ -52,7 +52,7 @@ void sysconfig()
         break;
       case 4:
         update_sel("SOG Time");
-        sel = update_btn(button(), sel, 7, 250);
+        sel = update_btn(button(), sel, 9, 250);
         if (button() == "Select")
         {
           delay (250);
@@ -61,7 +61,7 @@ void sysconfig()
         break;
       case 5:
         update_sel("Data Logging");
-        sel = update_btn(button(), sel, 7, 250);
+        sel = update_btn(button(), sel, 9, 250);
         if (button() == "Select")
         {
           delay (250);
@@ -69,8 +69,30 @@ void sysconfig()
         }
         break;
       case 6:
+        update_sel("Wifi ");
+        sel = update_btn(button(), sel, 9, 250);
+        if (button() == "Select")
+        {
+          delay (250);
+          //wificonfig("SET");
+          //SetupEsp8266();
+
+        }
+        break;
+      case 7:
+        update_sel("Control Station");
+        sel = update_btn(button(), sel, 9, 250);
+        if (button() == "Select")
+        {
+          delay (250);
+          ipconfig("SET");
+          set_port();
+        }
+        break;
+
+      case 8:
         update_sel("Exit");
-        sel = update_btn(button(), sel, 7, 250);
+        sel = update_btn(button(), sel, 9, 250);
         if (button() == "Select")
         {
           term = "Exit";

@@ -11,8 +11,8 @@ LiquidCrystal lcd(8, 9, 4, 5, 6, 7); // LCD Pin interface
 void setup()
 {
   lcd.begin(16, 2);
-  lcd.print("Loading");
   pinMode(13, OUTPUT);
+  pinMode(12, OUTPUT);
   Serial.begin(115200);
   setSyncProvider(RTC.get);
   if (button() == "Left")
@@ -20,6 +20,22 @@ void setup()
     sysconfig();
     setSyncProvider(RTC.get);
   }
+  lcd.setCursor(0, 0);
+  lcd.print("Test H/W      ");
+  lcd.setCursor(0, 1);
+  lcd.print("Test RTC      ");
+  lcd.setCursor(0, 1);
+  if (!RTC.chipPresent())
+  {
+    lcd.print("RTC Err        ");
+    while (1);
+  }
+  lcd.print("RTC OK        ");
+  TestEsp8266();
+  int Port = read_4DitiNo(35, 36);
+  String Prt = String (Prt, DEC);
+  String IP = ipconfig("GET");
+  ConnectServer("UDP", IP , Prt);
 }
 
 /*******************************************************
@@ -67,13 +83,15 @@ void loop()
   float DCcalf = EEPROM.read(40) / 100.00;
   DCcalf = DCcalf + EEPROM.read(39);
 
-  int DcOffset = get_offset("DC");
+  int DcOffset = read_4DitiNo(31, 32);
+  Serial.println(DcOffset);
   float SysampsAC = EEPROM.read(30) / 1024.00;
 
   float ACcalf = EEPROM.read(42) / 100.00;
   ACcalf = ACcalf + EEPROM.read(41);
 
-  int ACOffset = get_offset("AC");
+  int ACOffset = read_4DitiNo(33, 34);
+  Serial.println(ACOffset);
   byte ACerror = EEPROM.read(43);
 
   byte RelayOn = 0;
