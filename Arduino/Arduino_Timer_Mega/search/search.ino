@@ -15,7 +15,7 @@ void setup()
 void loop()
 {
   TestEsp8266();
-  connectWiFi("IM4s_Wi_Fi_M4","Sec20bSec20b!");
+  connectWiFi("IM4s_Wi_Fi_M4","some_pass");
   while (1);
 }
 

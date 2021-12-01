@@ -5,7 +5,7 @@ void setup()
   Serial1.begin(115200); // your esp's baud rate might be different
   sendData("AT+RST\r\n", 2000, DEBUG); // reset module
   sendData("AT+CWMODE=1\r\n", 1000, DEBUG); // configure as access point
-  sendData("AT+CWJAP=\"IM4s_Wi_Fi_M4\",\"Sec20bSec20b!\"\r\n", 10000, DEBUG); // configure as access point
+  sendData("AT+CWJAP=\"IM4s_Wi_Fi_M4\",\"some_pass\"\r\n", 10000, DEBUG); // configure as access point
   sendData("AT+CIFSR\r\n", 1000, DEBUG); // get ip address
   sendData("AT+CIPMUX=1\r\n", 1000, DEBUG); // configure for multiple connections
   sendData("AT+CIPSERVER=1,80\r\n", 1000, DEBUG); // turn on server on port 80

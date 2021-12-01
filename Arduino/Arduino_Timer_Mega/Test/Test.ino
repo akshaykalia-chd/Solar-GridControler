@@ -16,7 +16,7 @@ void setup()
   delay(15000);
   /*SendCmd("AT+CWMODE=1\r\n", 10);
   SendCmd("AT+CWQAP\r\n", 10);
-  SendCmd("AT+CWJAP=\"IM4s_Wi_Fi_M4\",\"Sec20bSec20b!\"\r\n", 10000);*/
+  SendCmd("AT+CWJAP=\"IM4s_Wi_Fi_M4\",\"some_pass\"\r\n", 10000);*/
   SendCmd("AT+CIFSR\r\n", 10,true);
   SendCmd("AT+CIPMUX=1\r\n", 10,true);
   SendCmd("AT+CIPSERVER=1,8888\r\n", 10,true);

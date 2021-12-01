@@ -53,8 +53,8 @@ void TestEsp8266()
 
 void SetEsp8266()
 {
-  String ssid = "IM4s_Wi_Fi_M4";
-  String pass = "Sec20bSec20b!";
+  String ssid = "ssid";
+  String pass = "password";
   boolean connected = connectWiFi(ssid, pass);
   if (!connected)
   {
