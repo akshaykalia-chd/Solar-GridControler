@@ -1,5 +1,5 @@
 //*******************************************************
-//Reading Voltage and averaging over 100 Milli second interval
+//Reading Voltage and avraging over 100 Mili second interval
 //*******************************************************
 float avg_voltage()
 {
@@ -19,8 +19,7 @@ float avg_voltage()
 }
 
 //*******************************************************
-//Reading Current and averaging over 2 second interval
-//averaging over 100 Milli second interval
+//Reading Current and avraging over 1 second interval
 //Do not modify unless explicitly defined by a comment
 //*******************************************************
 float avg_current(String sel)
@@ -29,8 +28,7 @@ float avg_current(String sel)
   int RunCount = 0;
   int sensorValue1 = 0;
   unsigned long previousMillis = millis();
-  unsigned long timem = 0;
-  while (timem < 100)
+  while (millis() - previousMillis < 100)
   {
     if (sel == "DC")
     {
@@ -43,8 +41,7 @@ float avg_current(String sel)
       delay(2);
     }
     RunCount = RunCount + 1;
-    timem = millis() - previousMillis;
-  }
+   }
   sensorValue1 = sensorValue1 / RunCount;
   if (sel == "DC")
   {
@@ -52,8 +49,7 @@ float avg_current(String sel)
     current = bat_c(sensorValue1, "DC");
     if (current < 0)
     {
-      timem = millis() - previousMillis;
-      GridTime = GridTime + timem;
+      GridTime = GridTime + millis() - previousMillis0;
     }
 
   }
@@ -63,10 +59,14 @@ float avg_current(String sel)
     current = bat_c(sensorValue1, "AC");
     float Watts = 0;
     Watts = current * 255;
-    timem = millis() - previousMillis;
-    float WM = Watts * timem;
+    unsigned int time = millis() - previousMillis0;
+    float WM = Watts * time;
     KWH = KWH + WM;
-  }
+    if (GridTime != 0)
+    {
+    previousMillis0 = GridTime;
+    }
+   }
   return current;
 }
 //*******************************************************
@@ -123,5 +123,3 @@ String button()
     return ("Select");
   return ("None");
 }
-
-
