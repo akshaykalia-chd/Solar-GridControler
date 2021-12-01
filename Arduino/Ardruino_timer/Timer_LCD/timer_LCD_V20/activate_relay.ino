@@ -2,14 +2,14 @@
 //Function to activate relay
 //Do not modify unless explicitly defined by a comment
 //*******************************************************
-void activate_relay()
+void activate_relay(byte PageNo)
 {
   unsigned long previousMillis = millis();
   float volts = avg_voltage();
   float amps = avg_current("DC");
   float ampsac = avg_current("AC");
   digitalWrite(13, LOW);
-  lcd_Display(amps, volts, "Off", ampsac);
+  lcd_Display(amps, volts, "Off", ampsac,PageNo);
   datalog("Off", amps, ampsac, volts);
   boolean RelayOn = false;
   float CutOffVolts = EEPROM.read(24) / 100;
@@ -30,13 +30,13 @@ void activate_relay()
       volts = avg_voltage();
       amps = avg_current("DC");
       ampsac = avg_current("AC");
-      lcd_Display(amps, volts, "On", ampsac);
+      lcd_Display(amps, volts, "On", ampsac,PageNo);
       datalog("On", amps, ampsac, volts);
       mamps = amps * (-1); //Moded amps
     }
     while (RelayOn == true)
     {
-      lcd_Display(amps, volts, "On", ampsac);
+      lcd_Display(amps, volts, "On", ampsac,PageNo);
       datalog("On", amps, ampsac, volts);
       volts = avg_voltage();
       amps = avg_current("DC");

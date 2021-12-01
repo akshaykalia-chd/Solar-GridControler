@@ -2,7 +2,7 @@
 //This will run on every alarm trigger
 //Do not modify unless explicitly defined by a comment
 //*******************************************************
-void Alarm()
+void Alarm(byte PageNo)
 {
   byte NoOfTimers;
   NoOfTimers = EEPROM.read(0);
@@ -27,16 +27,16 @@ void Alarm()
     offTime = offTime + EEPROM.read(addr3); // Off Mins
     if (cTime >= onTime && cTime <= offTime)
     {
-      relay_on(cTime, offTime, CutOffApms);
+      relay_on(cTime, offTime, CutOffApms,PageNo);
     }
     if (cTime >= onTime && offTime <= onTime)
     {
-      relay_on(cTime, offTime, CutOffApms);
+      relay_on(cTime, offTime, CutOffApms,PageNo);
     }
   }
 }
 
-void relay_on(int cT, int oT, float cAmps)
+void relay_on(int cT, int oT, float cAmps,byte PageNo)
 {
   if (cT != oT)
   {
@@ -48,7 +48,7 @@ void relay_on(int cT, int oT, float cAmps)
       float amps = avg_current("DC");
       float ampsac = avg_current("AC");
       float mamps = 0;
-      lcd_Display(amps, volts, "On", ampsac);
+      lcd_Display(amps, volts, "On", ampsac,PageNo);
       datalog("On", amps, ampsac, volts);
       int HH = hour();
       int MM = minute();
@@ -58,4 +58,3 @@ void relay_on(int cT, int oT, float cAmps)
     digitalWrite(13, LOW);
   }
 }
-
