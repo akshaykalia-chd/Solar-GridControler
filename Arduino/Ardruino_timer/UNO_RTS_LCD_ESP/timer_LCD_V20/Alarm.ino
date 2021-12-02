@@ -2,12 +2,8 @@
 //This will run on every alarm trigger
 //Do not modify unless explicitly defined by a comment
 //*******************************************************
-void Alarm()
+void Alarm(byte PageNo, byte NoOfTimers, float CutOffApms, int OnDay, int OnMonth, int OnHour, int OnMinute)
 {
-  byte NoOfTimers;
-  NoOfTimers = EEPROM.read(0);
-  float CutOffApms = EEPROM.read(26) / 100;
-  CutOffApms = CutOffApms + EEPROM.read(25);
   for (int i = 0; i < NoOfTimers; i++)
   {
     int HH, MM, cTime, onTime, offTime;
@@ -27,30 +23,27 @@ void Alarm()
     offTime = offTime + EEPROM.read(addr3); // Off Mins
     if (cTime >= onTime && cTime <= offTime)
     {
-      relay_on(cTime, offTime, CutOffApms);
+      relay_on(cTime, offTime, CutOffApms, PageNo, OnDay, OnMonth, OnHour, OnMinute);
     }
     if (cTime >= onTime && offTime <= onTime)
     {
-      relay_on(cTime, offTime, CutOffApms);
+      relay_on(cTime, offTime, CutOffApms, PageNo, OnDay, OnMonth, OnHour, OnMinute);
     }
   }
 }
 
-void relay_on(int cT, int oT, float cAmps)
+void relay_on(int cT, int oT, float cAmps, byte PageNo, int OnDay, int OnMonth, int OnHour, int OnMinute)
 {
   if (cT != oT)
   {
-    unsigned long previousMillis = millis();
     digitalWrite(13, HIGH);
     while (cT != oT)
     {
-      float volts = avg_voltage();
+      float volts = avg_voltage(sysvolts);
       float amps = avg_current("DC");
-      cal_gridtime(amps, previousMillis);
       float ampsac = avg_current("AC");
-      float mamps = 0;
-      lcd_Display(amps, volts, "On", ampsac);
-      datalog("On", amps, ampsac, volts);
+      lcd_Display(amps, volts, "On", ampsac, PageNo, OnDay, OnMonth, OnHour, OnMinute);
+      datalog("On", amps, ampsac, volts, OnDay, OnMonth, OnHour, OnMinute);
       int HH = hour();
       int MM = minute();
       cT = HH * 100;
@@ -59,4 +52,3 @@ void relay_on(int cT, int oT, float cAmps)
     digitalWrite(13, LOW);
   }
 }
-
