@@ -21,7 +21,7 @@ String ipconfig(String sel)
     IP = ipconfig("GET");
     update_ipcomp(47, IP);
     IP = ipconfig("GET");
-   }
+  }
   return IP;
 }
 
@@ -75,30 +75,36 @@ void update_ipcomp(int addr, String IP)
     lcd.print(IP);
     lcd.print("  ");
   }
-  EEPROM.write(addr, temp);
+  EEPROM.update(addr, temp);
   delay (250);
 }
-
+/**********************************
+Store CS port no in Eprom
+Eprom Address 35, 36
+***********************************/
 void set_port()
 {
   int port = read_4DitiNo(35, 36);
   port = update_Tcom("CS Port:", port, 10000);
-  store_4DitiNo(port, 33,34);
+  store_4DitiNo(port, 35, 36);
 }
 
-String wificonfig(String sel)
+/**************************************
+Read Wifi parameters from Serial Port
+***************************************/
+String SreadWiFiconfig(String sel)
 {
   lcd.setCursor(0, 0);
   lcd.print("1.Connect to PC");
   lcd.setCursor(0, 1);
-  lcd.print("2.Follow Prompts");
+  lcd.print("2.Turn-off Mains");
   if (sel == "GETSSID")
   {
-    Serial.print("Eenter SSID:");
+    Serial.println("Eenter SSID:");
   }
   if (sel == "GETPASS")
   {
-    Serial.print("Eenter Password:");
+    Serial.println("Eenter Password:");
   }
   String input = "";
   char inbyte = ' ';
@@ -107,8 +113,21 @@ String wificonfig(String sel)
     while (Serial.available())
     {
       inbyte = Serial.read();
-      input += inbyte;
+      if (inbyte != '\n')
+      {
+        input += inbyte;
+      }
     }
   }
-return input;
+  return input;
+}
+
+void WiFiconfig()
+{
+  String SSID = SreadWiFiconfig("GETSSID");
+  String PASS = SreadWiFiconfig("GETPASS");
+  Serial.println("1.Turn-on Mains");
+  Serial.println("Waiting for 10 Seconds");
+  delay(10000);
+  SetupEsp8266(SSID, PASS);
 }

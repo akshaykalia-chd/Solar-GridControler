@@ -1,7 +1,7 @@
 //*******************************************************
 //Function to log data using Serial line monitoring over usb
 //*******************************************************
-void datalog(byte datalogset, byte RelayOn, float amps, float volts, float ampsac, int OnDay, int OnMonth, int OnHour, int OnMinute, float KWH, unsigned long GridTime, float CutOffVolts, float CutOffApms, byte SogMorning, byte SogNight, float sysvoltsdc, float SysampsDC, float SysampsAC, byte NoOfTimers, int ACOffset, int DcOffset, float ACcalf, float DCcalf, byte ACerror, int onTime1, int offTime1, int onTime2, int offTime2, int onTime3, int offTime3, int onTime4, int offTime4, int onTime5, int offTime5) //function to print data on usb
+void datalog(byte datalogset, byte RelayOn, float amps, float volts, float ampsac, int OnDay, int OnMonth, int OnHour, int OnMinute, float KWH, unsigned long GridTime, float KWHMPPT, float ampsMPPT, float CutOffVolts, float CutOffApms, byte SogMorning, byte SogNight, float sysvoltsdc, float SysampsDC, float SysampsAC, byte NoOfTimers, int ACOffset, int DcOffset, float ACcalf, float DCcalf, byte ACerror, int onTime1, int offTime1, int onTime2, int offTime2, int onTime3, int offTime3, int onTime4, int offTime4, int onTime5, int offTime5) //function to print data on usb
 {
   if (datalogset == 1)
   {
@@ -18,6 +18,16 @@ void datalog(byte datalogset, byte RelayOn, float amps, float volts, float ampsa
     data += ':';
     data += String (second(), DEC);
     data += ',';
+    data += String (OnDay, DEC);
+    data += "/";
+    data += String (OnMonth, DEC);
+    data += ",";
+    data += String (OnHour, DEC);
+    data += ":";
+    data += String (OnMinute, DEC);
+    data += ',';
+    data += ftos (ampsMPPT);
+    data += ',';
     data += ftos(amps);
     data += ',';
     data += ftos(volts);
@@ -26,21 +36,9 @@ void datalog(byte datalogset, byte RelayOn, float amps, float volts, float ampsa
     data += ',';
     data += ftos(KWH / 3600000000.00);
     data += ',';
+    data += ftos (KWHMPPT / 3600000000.00);
+    data += ',';
     data += ftos(GridTime / 60000.00);
-    data += ',';
-    data += String (SogMorning, DEC);
-    data += ',';
-    data += String (SogNight, DEC);
-    data += ',';
-    data += ftos (CutOffApms);
-    data += ',';
-    data += ftos (CutOffVolts);
-    data += ',';
-    data += ftos(sysvoltsdc * 1024.00);
-    data += ',';
-    data += ftos(SysampsDC * 1024.00);
-    data += ',';
-    data += ftos(SysampsAC * 1024.00);
     data += ',';
     if (RelayOn == 0)
     {
@@ -55,6 +53,31 @@ void datalog(byte datalogset, byte RelayOn, float amps, float volts, float ampsa
       data += "Timer";
     }
     data += ',';
+    data += "18";
+    data += '\n';
+    Serial.print("AT+CIPSEND=0,");
+    Serial.print(data.length());
+    Serial.println();
+    delay(2);
+    Serial.println(data);
+  }
+  if (button() == "Select")
+  {
+    delay(150);
+    String data = String (SogMorning, DEC);
+    data += ',';
+    data += String (SogNight, DEC);
+    data += ',';
+    data += ftos (CutOffApms);
+    data += ',';
+    data += ftos (CutOffVolts);
+    data += ',';
+    data += ftos(sysvoltsdc * 1024.00);
+    data += ',';
+    data += ftos(SysampsDC * 1024.00);
+    data += ',';
+    data += ftos(SysampsAC * 1024.00);
+    data += ',';
     data += String(ACOffset, DEC);
     data += ',';
     data += String (DcOffset, DEC);
@@ -64,14 +87,6 @@ void datalog(byte datalogset, byte RelayOn, float amps, float volts, float ampsa
     data += ftos(ACcalf);
     data += ',';
     data += String (ACerror, DEC);
-    data += ',';
-    data += String (OnDay, DEC);
-    data += "/";
-    data += String (OnMonth, DEC);
-    data += " ";
-    data += String (OnHour, DEC);
-    data += ":";
-    data += String (OnMinute, DEC);
     data += ',';
     data += String (NoOfTimers, DEC);
     data += ',';
@@ -94,18 +109,14 @@ void datalog(byte datalogset, byte RelayOn, float amps, float volts, float ampsa
     data += String (onTime5, DEC);
     data += ',';
     data += String (offTime5, DEC);
-    data += ',';
-    data += "16";
-    String cipSend = "AT+CIPSEND=";
-    cipSend += data.length();
-    Serial.println(cipSend);
-    delay(10);
+    data += '\n';
+    Serial.print("AT+CIPSEND=0,");
+    Serial.print(data.length());
+    Serial.println();
+    delay(2);
     Serial.println(data);
-    //SendCmd(cipSend, false, 8);
-    //SendCmd(data, false, 8);
   }
 }
-
 
 String ftos (float a)
 {

@@ -45,21 +45,20 @@ void update_cutoff(byte ad1, byte ad2, String cutcomp)
     AV = update_btn(button(), AV, 100, 250);
     cutoffdisp(PV, AV, cutcomp);
   }
-  EEPROM.write(ad1, PV);
-  EEPROM.write(ad2, AV);
+  EEPROM.update(ad1, PV);
+  EEPROM.update(ad2, AV);
   delay(250);
 }
 
 void cutoffdisp(byte PD, byte AD, String cutoff)
 {
+  lcd.clear();
   lcd.setCursor(0, 1);
   lcd.print("CutOff/Calib");
-  lcd.print("      ");
   lcd.setCursor(0, 0);
   lcd.print(cutoff);
   lcd.print(":");
   lcd.print(PD);
   lcd.print(".");
   lcd.print(AD);
-  lcd.print("      ");
 }
