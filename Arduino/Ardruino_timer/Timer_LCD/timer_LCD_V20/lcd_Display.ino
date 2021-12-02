@@ -8,7 +8,7 @@ void lcd_Display(byte RelayOn, float KWHMPPT, float ampsMPPT, float amps, float 
     lcd.setCursor(0, 0);
     lcd.print("IM4S SSGMC M-3");
     lcd.setCursor(0, 1);
-    lcd.print("Code Build:16");
+    lcd.print("Code Build:19");
   }
   if (PageNo == 1)
   {

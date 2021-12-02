@@ -29,7 +29,7 @@ void TestEsp8266()
     lcd.clear();
     lcd.setCursor(0, 0);
     lcd.print("WiFi H/W Err");
-    while (1);
+    while (button() != "Select");
   }
 }
 

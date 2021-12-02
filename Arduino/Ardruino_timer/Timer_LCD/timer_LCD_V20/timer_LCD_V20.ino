@@ -15,8 +15,13 @@ void setup()
   pinMode(12, OUTPUT);
   Serial.begin(115200);
   setSyncProvider(RTC.get);
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Code Build 19");
+  delay(2000);
   if (button() == "Left")
   {
+    lcd.clear();
     sysconfig();
     setSyncProvider(RTC.get);
   }
@@ -25,7 +30,7 @@ void setup()
     lcd.clear();
     lcd.setCursor(0, 0);
     lcd.print("RTC Err");
-    while (1);
+    while (button() != "Select");
   }
   TestEsp8266();
   SendCmd("AT+CIPMUX=1", false, 1);
