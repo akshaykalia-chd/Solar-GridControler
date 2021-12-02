@@ -27,3 +27,11 @@ float Cal_KWH(float amps, unsigned long previousMillis, float ampsac)
   }
   return 0;
 }
+
+float Cal_KWHMPPT(float volts, unsigned long previousMillis, float ampsMPPT)
+{
+    float Watts = ampsMPPT * volts;
+    unsigned int time = millis() - previousMillis;
+    float WM = Watts * time;
+    return WM;
+}

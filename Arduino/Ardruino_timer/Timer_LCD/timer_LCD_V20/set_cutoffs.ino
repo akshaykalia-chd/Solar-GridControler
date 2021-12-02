@@ -45,8 +45,8 @@ void update_cutoff(byte ad1, byte ad2, String cutcomp)
     AV = update_btn(button(), AV, 100, 250);
     cutoffdisp(PV, AV, cutcomp);
   }
-  EEPROM.write(ad1, PV);
-  EEPROM.write(ad2, AV);
+  EEPROM.update(ad1, PV);
+  EEPROM.update(ad2, AV);
   delay(250);
 }
 

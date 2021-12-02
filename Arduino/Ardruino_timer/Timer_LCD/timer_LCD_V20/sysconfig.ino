@@ -74,9 +74,7 @@ void sysconfig()
         if (button() == "Select")
         {
           delay (250);
-          //wificonfig("SET");
-          //SetupEsp8266();
-
+          WiFiconfig();
         }
         break;
       case 7:
@@ -108,5 +106,5 @@ void update_sel(String comp)
   lcd.print(comp);
   lcd.print("          ");
   lcd.setCursor(0, 1);
-  lcd.print("              ");
+  lcd.print("                  ");
 }

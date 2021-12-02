@@ -1,7 +1,7 @@
 //*******************************************************
 //Function to display data on LCD
 //*******************************************************
-void lcd_Display(byte RelayOn, float amps, float volts, float ampsac, byte PageNo, int OnDay, int OnMonth, int OnHour, int OnMinute, float KWH, unsigned long GridTime, float CutOffVolts, float CutOffApms, byte SogMorning, byte SogNight, float sysvoltsdc, float SysampsDC, float SysampsAC)
+void lcd_Display(byte RelayOn, float KWHMPPT, float ampsMPPT, float amps, float volts, float ampsac, byte PageNo, int OnDay, int OnMonth, int OnHour, int OnMinute, float KWH, unsigned long GridTime, float CutOffVolts, float CutOffApms, byte SogMorning, byte SogNight, float sysvoltsdc, float SysampsDC, float SysampsAC)
 {
   if (PageNo == 0)
   {
@@ -20,11 +20,11 @@ void lcd_Display(byte RelayOn, float amps, float volts, float ampsac, byte PageN
   {
     lcd.setCursor(0, 0);
     lcd.print("KWH used:");
-    lcd.print(KWH / 3600000000);
+    lcd.print(ftos(KWH / 3600000000));
     lcd.print("           ");
     lcd.setCursor(0, 1);
-    lcd.print("TGT(H):");
-    lcd.print(GridTime / 3600000);
+    lcd.print("KWH PV:");
+    lcd.print(ftos(KWHMPPT / 3600000000));
     lcd.print("           ");
   }
   if (PageNo == 3)
@@ -37,14 +37,17 @@ void lcd_Display(byte RelayOn, float amps, float volts, float ampsac, byte PageN
       lcd.print("Run Time(H):");
       lcd.print("CHRG");
     }
-    lcd.print("Run Time(H):");
-    lcd.print(runtime);
-    lcd.print("         ");
+    lcd.print(ftos(runtime));
+    lcd.print("H");
+    lcd.print(" ");
+    lcd.print(ftos(ampsMPPT));
+    lcd.print("A");
+    lcd.print("            ");
     lcd.setCursor(0, 1);
-    lcd.print(volts);
+    lcd.print(ftos(volts));
     lcd.print("V");
     lcd.print(" ");
-    lcd.print(amps);
+    lcd.print(ftos(amps));
     lcd.print("A");
     lcd.print("             ");
   }
@@ -55,7 +58,7 @@ void lcd_Display(byte RelayOn, float amps, float volts, float ampsac, byte PageN
     lcd.print("             ");
     lcd.setCursor(0, 1);
     lcd.print("AC Amps:");
-    lcd.print(ampsac);
+    lcd.print(ftos(ampsac));
     lcd.print("A");
     lcd.print("             ");
   }
@@ -78,41 +81,41 @@ void lcd_Display(byte RelayOn, float amps, float volts, float ampsac, byte PageN
     }
     lcd.print("         ");
     lcd.setCursor(0, 1);
-    lcd.print("On Volts:");
-    lcd.print(CutOffVolts);
-    lcd.print("         ");
+    lcd.print("TGT(H):");
+    lcd.print(ftos(GridTime / 3600000));
+    lcd.print("           ");
   }
   if (PageNo == 6)
   {
     lcd.setCursor(0, 0);
     lcd.print("Off Amps:");
-    lcd.print(CutOffApms);
+    lcd.print(ftos(CutOffApms));
     lcd.print("         ");
     lcd.setCursor(0, 1);
-    lcd.print("SOG PM(M):");
-    lcd.print(SogMorning);
+    lcd.print("On Volts:");
+    lcd.print(ftos(CutOffVolts));
     lcd.print("         ");
-  }
+   }
   if (PageNo == 7)
   {
     lcd.setCursor(0, 0);
     lcd.print("SOG AM(M):");
-    lcd.print(SogNight);
+    lcd.print(SogMorning);
     lcd.print("         ");
     lcd.setCursor(0, 1);
-    lcd.print("Sys Amps DC:");
-    lcd.print(SysampsDC * 1024.00);
+    lcd.print("SOG PM(M):");
+    lcd.print(SogNight);
     lcd.print("         ");
   }
   if (PageNo == 8)
   {
     lcd.setCursor(0, 0);
     lcd.print("Sys Volts DC:");
-    lcd.print(sysvoltsdc * 1024.00);
+    lcd.print(ftos(sysvoltsdc * 1024.00));
     lcd.print("         ");
     lcd.setCursor(0, 1);
     lcd.print("Sys Amps AC:");
-    lcd.print(SysampsAC * 1024.00);
+    lcd.print(ftos(SysampsAC * 1024.00));
     lcd.print("         ");
   }
   if (PageNo == 9)
@@ -128,6 +131,13 @@ void lcd_Display(byte RelayOn, float amps, float volts, float ampsac, byte PageN
     lcd.print(OnHour);
     lcd.print(":");
     lcd.print(OnMinute);
+    lcd.print("         ");
+  }
+  if (PageNo == 10)
+  {
+    lcd.setCursor(0, 0);
+    lcd.print("Sys Amps DC:");
+    lcd.print(SysampsDC * 1024.00);
     lcd.print("         ");
   }
 }

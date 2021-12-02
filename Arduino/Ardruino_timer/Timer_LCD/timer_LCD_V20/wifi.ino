@@ -54,6 +54,7 @@ void SetupEsp8266(String ssid,String pass)
 boolean connectWiFi(String ssid, String pass)
 {
   TestEsp8266();
+  SendCmd("AT+CWQAP",false,2000);
   SendCmd("AT+CWMODE=1", true, 2000);
   String cmd = "AT+CWJAP=\"";
   cmd += ssid;
@@ -79,4 +80,3 @@ boolean SendCmd(String cmd, boolean debug, int d)
     }
   }
 }
-

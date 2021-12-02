@@ -32,10 +32,6 @@ void setup()
   }
   lcd.print("RTC OK        ");
   TestEsp8266();
-  int Port = read_4DitiNo(35, 36);
-  String Prt = String (Prt, DEC);
-  String IP = ipconfig("GET");
-  ConnectServer("UDP", IP , Prt);
 }
 
 /*******************************************************
@@ -44,9 +40,11 @@ Main function this will be running in a infinite loop
 void loop()
 {
   float KWH = 0;
+  float KWHMPPT = 0;
   unsigned long GridTime = 0;
   float volts = 0;
   float amps = 0;
+  float ampsMPPT = 0;
   float ampsac = 0;
   byte PageNo = 1;
 
@@ -70,29 +68,34 @@ void loop()
   int OnMonth = month();
   int OnHour = hour();
   int OnMinute = minute();
-
   int onTime[5] = {0, 0, 0, 0, 0};
   int offTime[5] = {0, 0, 0, 0, 0};
-  for (int i = 0; i < NoOfTimers; i++)
-  {
-    onTime[i] = get_timer(i, NoOfTimers, "OnTime");
-    offTime[i] = get_timer(i, NoOfTimers, "OffTime");
-  }
-  float SysampsDC = EEPROM.read(22) / 1024.00;
 
+  if (NoOfTimers != 0 && NoOfTimers <= 5)
+  {
+    for (int i = 0; i < NoOfTimers; i++)
+    {
+      onTime[i] = get_timer(i, NoOfTimers, "OnTime");
+      offTime[i] = get_timer(i, NoOfTimers, "OffTime");
+    }
+  }
+
+  float SysampsDC = EEPROM.read(22) / 1024.00;
   float DCcalf = EEPROM.read(40) / 100.00;
   DCcalf = DCcalf + EEPROM.read(39);
 
   int DcOffset = read_4DitiNo(31, 32);
-  Serial.println(DcOffset);
   float SysampsAC = EEPROM.read(30) / 1024.00;
 
   float ACcalf = EEPROM.read(42) / 100.00;
   ACcalf = ACcalf + EEPROM.read(41);
 
   int ACOffset = read_4DitiNo(33, 34);
-  Serial.println(ACOffset);
   byte ACerror = EEPROM.read(43);
+
+  int Port = read_4DitiNo(35, 36);
+  String Prt = String (Port, DEC);
+  String IP = ipconfig("GET");
 
   byte RelayOn = 0;
   digitalWrite(13, LOW);
@@ -101,15 +104,19 @@ void loop()
   unsigned long elaptime = 0;
   unsigned long pelaptime = millis();
   unsigned long previousMillis = millis ();
+
+  ConnectServer("UDP", IP , Prt);
   while (1)
   {
-    PageNo = update_btn(button(), PageNo, 10, 150);
+    PageNo = update_btn(button(), PageNo, 11, 150);
     volts = avg_voltage(sysvoltsdc);
-    PageNo = update_btn(button(), PageNo, 10, 150);
+    PageNo = update_btn(button(), PageNo, 11, 150);
     amps = avg_currentDc(SysampsDC, DCcalf, DcOffset);
-    PageNo = update_btn(button(), PageNo, 10, 150);
+    PageNo = update_btn(button(), PageNo, 11, 150);
+    ampsMPPT = avg_currentMPPT(SysampsDC, DCcalf, DcOffset);
+    PageNo = update_btn(button(), PageNo, 11, 150);
     ampsac = avg_currentAc(SysampsAC, ACcalf, ACOffset, ACerror);
-    PageNo = update_btn(button(), PageNo, 10, 150);
+    PageNo = update_btn(button(), PageNo, 11, 150);
     if (RelayOn == 0)
     {
       pelaptime = millis();
@@ -118,7 +125,7 @@ void loop()
     if (NoOfTimers == 0)
     {
       RelayOn = activate_relay(volts, CutOffVolts, RelayOn, 0, 0);
-      PageNo = update_btn(button(), PageNo, 10, 150);
+      PageNo = update_btn(button(), PageNo, 11, 150);
       if (RunCount >= 100)
       {
         RelayOn = deactivate_relay(amps, CutOffApms, SogMorningb, SogNightb, RelayOn, elaptime, 0);
@@ -127,7 +134,7 @@ void loop()
     for (int i = 0; i < NoOfTimers; i++)
     {
       RelayOn = activate_relay(volts, CutOffVolts, RelayOn, onTime[i], offTime[i]);
-      PageNo = update_btn(button(), PageNo, 10, 150);
+      PageNo = update_btn(button(), PageNo, 11, 150);
       if (RunCount >= 100)
       {
         RelayOn = deactivate_relay(amps, CutOffApms, SogMorningb, SogNightb, RelayOn, elaptime, offTime[i]);
@@ -139,10 +146,11 @@ void loop()
     }
     GridTime = GridTime + Cal_Gridtime(amps, previousMillis);
     KWH = KWH + Cal_KWH(amps, previousMillis, ampsac);
+    KWHMPPT = KWHMPPT + Cal_KWHMPPT(volts, previousMillis, ampsMPPT);
     previousMillis = millis();
-    PageNo = update_btn(button(), PageNo, 10, 150);
-    lcd_Display(RelayOn, amps, volts, ampsac, PageNo, OnDay, OnMonth, OnHour, OnMinute, KWH, GridTime, CutOffVolts, CutOffApms, SogMorningb, SogNightb, sysvoltsdc, SysampsDC, SysampsAC);
-    datalog(datalogset, RelayOn, amps, volts, ampsac, OnDay, OnMonth, OnHour, OnMinute, KWH, GridTime, CutOffVolts, CutOffApms, SogMorningb, SogNightb, sysvoltsdc, SysampsDC, SysampsAC, NoOfTimers, ACOffset, DcOffset, ACcalf, DCcalf, ACerror, onTime[0], offTime[0], onTime[1], offTime[1], onTime[2], offTime[2], onTime[3], offTime[3], onTime[4], offTime[4]);
+    PageNo = update_btn(button(), PageNo, 11, 150);
+    lcd_Display(RelayOn, KWHMPPT, ampsMPPT, amps, volts, ampsac, PageNo, OnDay, OnMonth, OnHour, OnMinute, KWH, GridTime, CutOffVolts, CutOffApms, SogMorningb, SogNightb, sysvoltsdc, SysampsDC, SysampsAC);
+    datalog(datalogset, RelayOn, amps, volts, ampsac, OnDay, OnMonth, OnHour, OnMinute, KWH, GridTime, CutOffVolts, CutOffApms, SogMorningb, SogNightb, sysvoltsdc, SysampsDC, SysampsAC, KWHMPPT, ampsMPPT, NoOfTimers, ACOffset, DcOffset, ACcalf, DCcalf, ACerror, onTime[0], offTime[0], onTime[1], offTime[1], onTime[2], offTime[2], onTime[3], offTime[3], onTime[4], offTime[4]);
     if (GridTime > 4294966296)
     {
       GridTime = 0;
