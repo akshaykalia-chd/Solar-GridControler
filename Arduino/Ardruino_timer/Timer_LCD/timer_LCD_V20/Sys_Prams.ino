@@ -6,7 +6,7 @@ void set_sysvolts()
 {
   byte sysvolts = EEPROM.read(21);
   sysvolts = update_Tcom("Volts DC", sysvolts, 255);
-  EEPROM.write(21, sysvolts);
+  EEPROM.update(21, sysvolts);
 }
 //*******************************************************
 //Function to setup System Amps DC
@@ -16,7 +16,7 @@ void set_sysamps()
 {
   byte sysamps = EEPROM.read(22);
   sysamps = update_Tcom("Amps DC", sysamps, 255);
-  EEPROM.write(22, sysamps);
+  EEPROM.update(22, sysamps);
 }
 
 //*******************************************************
@@ -27,7 +27,7 @@ void set_sysamps_AC()
 {
   byte sysamps = EEPROM.read(30);
   sysamps = update_Tcom("Amps AC", sysamps, 255);
-  EEPROM.write(30, sysamps);
+  EEPROM.update(30, sysamps);
 }
 //*******************************************************
 //Function to setup Data Logging
@@ -37,7 +37,7 @@ void set_loger()
 {
   byte loger = EEPROM.read(29);
   loger = update_Tcom("Loger", loger, 2);
-  EEPROM.write(29, loger);
+  EEPROM.update(29, loger);
 }
 
 //*******************************************************
@@ -48,7 +48,7 @@ void set_Aacnl()
 {
   byte acnl = EEPROM.read(43);
   acnl = update_Tcom("ACNL", acnl, 255);
-  EEPROM.write(43, acnl);
+  EEPROM.update(43, acnl);
 }
 
 //*******************************************************
@@ -59,7 +59,7 @@ void set_DcOffset()
 {
   int offset = read_4DitiNo(31, 32);
   offset = update_Tcom("DC Offset", offset, 1024);
-  store_4DitiNo(offset,31, 32);
+  store_4DitiNo(offset, 31, 32);
 }
 
 //*******************************************************
@@ -70,7 +70,7 @@ void set_AcOffset()
 {
   int offset = read_4DitiNo(33, 34);
   offset = update_Tcom("AC Offset", offset, 1024);
-  store_4DitiNo(offset, 33,34);
+  store_4DitiNo(offset, 33, 34);
 }
 //*******************************************************
 //Function to read/write 4 ditin number from eprom
@@ -80,8 +80,8 @@ void store_4DitiNo(int offset, int add1, int add2)
   byte b1 = offset / 100;
   int temp = b1 * 100;
   byte b2 = offset - temp;
-  EEPROM.write(add1, b1);
-  EEPROM.write(add2, b2);
+  EEPROM.update(add1, b1);
+  EEPROM.update(add2, b2);
 }
 int read_4DitiNo(int add1, int add2)
 {

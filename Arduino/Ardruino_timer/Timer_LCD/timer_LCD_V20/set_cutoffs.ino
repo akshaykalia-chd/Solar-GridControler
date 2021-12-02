@@ -52,14 +52,13 @@ void update_cutoff(byte ad1, byte ad2, String cutcomp)
 
 void cutoffdisp(byte PD, byte AD, String cutoff)
 {
+  lcd.clear();
   lcd.setCursor(0, 1);
   lcd.print("CutOff/Calib");
-  lcd.print("      ");
   lcd.setCursor(0, 0);
   lcd.print(cutoff);
   lcd.print(":");
   lcd.print(PD);
   lcd.print(".");
   lcd.print(AD);
-  lcd.print("      ");
 }

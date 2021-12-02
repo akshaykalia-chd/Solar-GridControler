@@ -7,10 +7,8 @@ void lcd_Display(byte RelayOn, float KWHMPPT, float ampsMPPT, float amps, float 
   {
     lcd.setCursor(0, 0);
     lcd.print("IM4S SSGMC M-3");
-    lcd.print("            ");
     lcd.setCursor(0, 1);
     lcd.print("Code Build:16");
-    lcd.print("             ");
   }
   if (PageNo == 1)
   {
@@ -21,11 +19,9 @@ void lcd_Display(byte RelayOn, float KWHMPPT, float ampsMPPT, float amps, float 
     lcd.setCursor(0, 0);
     lcd.print("KWH used:");
     lcd.print(ftos(KWH / 3600000000));
-    lcd.print("           ");
     lcd.setCursor(0, 1);
     lcd.print("KWH PV:");
     lcd.print(ftos(KWHMPPT / 3600000000));
-    lcd.print("           ");
   }
   if (PageNo == 3)
   {
@@ -42,25 +38,21 @@ void lcd_Display(byte RelayOn, float KWHMPPT, float ampsMPPT, float amps, float 
     lcd.print(" ");
     lcd.print(ftos(ampsMPPT));
     lcd.print("A");
-    lcd.print("            ");
     lcd.setCursor(0, 1);
     lcd.print(ftos(volts));
     lcd.print("V");
     lcd.print(" ");
     lcd.print(ftos(amps));
     lcd.print("A");
-    lcd.print("             ");
   }
   if (PageNo == 4)
   {
     lcd.setCursor(0, 0);
     lcd.print("AC Volts:255V");
-    lcd.print("             ");
     lcd.setCursor(0, 1);
     lcd.print("AC Amps:");
     lcd.print(ftos(ampsac));
     lcd.print("A");
-    lcd.print("             ");
   }
 
   if (PageNo == 5)
@@ -79,44 +71,36 @@ void lcd_Display(byte RelayOn, float KWHMPPT, float ampsMPPT, float amps, float 
     {
       lcd.print("Timer");
     }
-    lcd.print("         ");
     lcd.setCursor(0, 1);
     lcd.print("TGT(H):");
     lcd.print(ftos(GridTime / 3600000));
-    lcd.print("           ");
   }
   if (PageNo == 6)
   {
     lcd.setCursor(0, 0);
     lcd.print("Off Amps:");
     lcd.print(ftos(CutOffApms));
-    lcd.print("         ");
     lcd.setCursor(0, 1);
     lcd.print("On Volts:");
     lcd.print(ftos(CutOffVolts));
-    lcd.print("         ");
-   }
+  }
   if (PageNo == 7)
   {
     lcd.setCursor(0, 0);
     lcd.print("SOG AM(M):");
     lcd.print(SogMorning);
-    lcd.print("         ");
     lcd.setCursor(0, 1);
     lcd.print("SOG PM(M):");
     lcd.print(SogNight);
-    lcd.print("         ");
   }
   if (PageNo == 8)
   {
     lcd.setCursor(0, 0);
     lcd.print("Sys Volts DC:");
     lcd.print(ftos(sysvoltsdc * 1024.00));
-    lcd.print("         ");
     lcd.setCursor(0, 1);
     lcd.print("Sys Amps AC:");
     lcd.print(ftos(SysampsAC * 1024.00));
-    lcd.print("         ");
   }
   if (PageNo == 9)
   {
@@ -125,20 +109,17 @@ void lcd_Display(byte RelayOn, float KWHMPPT, float ampsMPPT, float amps, float 
     lcd.print(OnDay);
     lcd.print("/");
     lcd.print(OnMonth);
-    lcd.print("         ");
     lcd.setCursor(0, 1);
     lcd.print("On Time:");
     lcd.print(OnHour);
     lcd.print(":");
     lcd.print(OnMinute);
-    lcd.print("         ");
   }
   if (PageNo == 10)
   {
     lcd.setCursor(0, 0);
     lcd.print("Sys Amps DC:");
     lcd.print(SysampsDC * 1024.00);
-    lcd.print("         ");
   }
 }
 //*******************************************************

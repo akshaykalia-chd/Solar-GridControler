@@ -2,8 +2,15 @@ void sysconfig()
 {
   String term = "Run";
   byte sel = 0;
+  byte psel = 0;
   while (term != "Exit")
   {
+    if (sel != psel)
+    {
+      lcd.clear();
+      psel = sel;
+    }
+
     switch (sel)
     {
       case 0:
@@ -69,7 +76,7 @@ void sysconfig()
         }
         break;
       case 6:
-        update_sel("Wifi ");
+        update_sel("WiFi");
         sel = update_btn(button(), sel, 9, 250);
         if (button() == "Select")
         {
@@ -104,7 +111,4 @@ void update_sel(String comp)
 {
   lcd.setCursor(0, 0);
   lcd.print(comp);
-  lcd.print("          ");
-  lcd.setCursor(0, 1);
-  lcd.print("                  ");
 }

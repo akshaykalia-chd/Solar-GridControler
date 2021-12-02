@@ -20,23 +20,20 @@ void setup()
     sysconfig();
     setSyncProvider(RTC.get);
   }
-  lcd.setCursor(0, 0);
-  lcd.print("Test H/W      ");
-  lcd.setCursor(0, 1);
-  lcd.print("Test RTC      ");
-  lcd.setCursor(0, 1);
   if (!RTC.chipPresent())
   {
-    lcd.print("RTC Err        ");
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("RTC Err");
     while (1);
   }
-  lcd.print("RTC OK        ");
   TestEsp8266();
+  SendCmd("AT+CIPMUX=1", false, 1);
 }
-
 /*******************************************************
 Main function this will be running in a infinite loop
 *******************************************************/
+
 void loop()
 {
   float KWH = 0;
@@ -47,6 +44,7 @@ void loop()
   float ampsMPPT = 0;
   float ampsac = 0;
   byte PageNo = 1;
+  byte PPageNo = 1;
 
   byte datalogset = EEPROM.read(29);
 
@@ -149,8 +147,13 @@ void loop()
     KWHMPPT = KWHMPPT + Cal_KWHMPPT(volts, previousMillis, ampsMPPT);
     previousMillis = millis();
     PageNo = update_btn(button(), PageNo, 11, 150);
+    if (PageNo != PPageNo)
+    {
+      lcd.clear();
+      PPageNo = PageNo;
+    }
     lcd_Display(RelayOn, KWHMPPT, ampsMPPT, amps, volts, ampsac, PageNo, OnDay, OnMonth, OnHour, OnMinute, KWH, GridTime, CutOffVolts, CutOffApms, SogMorningb, SogNightb, sysvoltsdc, SysampsDC, SysampsAC);
-    datalog(datalogset, RelayOn, amps, volts, ampsac, OnDay, OnMonth, OnHour, OnMinute, KWH, GridTime, CutOffVolts, CutOffApms, SogMorningb, SogNightb, sysvoltsdc, SysampsDC, SysampsAC, KWHMPPT, ampsMPPT, NoOfTimers, ACOffset, DcOffset, ACcalf, DCcalf, ACerror, onTime[0], offTime[0], onTime[1], offTime[1], onTime[2], offTime[2], onTime[3], offTime[3], onTime[4], offTime[4]);
+    datalog(datalogset, RelayOn, amps, volts, ampsac, OnDay, OnMonth, OnHour, OnMinute, KWH, GridTime, KWHMPPT, ampsMPPT, CutOffVolts, CutOffApms, SogMorningb, SogNightb, sysvoltsdc, SysampsDC, SysampsAC, ACOffset, DcOffset, ACcalf, DCcalf, ACerror, NoOfTimers, onTime[0], offTime[0], onTime[1], offTime[1], onTime[2], offTime[2], onTime[3], offTime[3], onTime[4], offTime[4]);
     if (GridTime > 4294966296)
     {
       GridTime = 0;

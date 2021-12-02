@@ -12,7 +12,6 @@ byte activate_relay(float volts, float CutOffVolts, byte RelayOn, int OnTime, in
     if (volts < CutOffVolts)
     {
       digitalWrite(13, HIGH);
-      Serial.println("Vlots condtion meet");
       return 1;
     }
     if (OnTime != 0 && OffTime != 0)
@@ -23,13 +22,11 @@ byte activate_relay(float volts, float CutOffVolts, byte RelayOn, int OnTime, in
       if (cTime >= OnTime && cTime < OffTime)
       {
         digitalWrite(13, HIGH);
-        Serial.println("Timer condtion1 meet");
         return 2;
       }
       if (cTime >= OnTime && OffTime < OnTime)
       {
         digitalWrite(13, HIGH);
-        Serial.println("Timer condtion2 meet");
         return 2;
       }
     }
@@ -41,15 +38,17 @@ byte activate_relay(float volts, float CutOffVolts, byte RelayOn, int OnTime, in
 //Function to deactivate relay
 //Do not modify unless explicitly defined by a comment
 //*******************************************************
-byte deactivate_relay(float amps, float CutOffApms, unsigned long SogMorning, unsigned long SogNight, byte RelayOn, unsigned long elaptime, int OffTime)
+byte deactivate_relay(float amps, float CutOffApms, byte SogMorningb, byte SogNightb, byte RelayOn, unsigned int elaptime, int OffTime)
 {
+  unsigned long SogMorning = SogMorningb * 60000;
+  unsigned long SogNight = SogNightb * 60000;
+
   if (RelayOn == 1)
   {
     float mamps = amps * (-1); //moded amps
     if (mamps < CutOffApms)
     {
       digitalWrite(13, LOW);
-      Serial.println("Amps condtion meet");
       return 0;
     }
     if (hour() >= 07 && hour() <= 16)
@@ -57,14 +56,12 @@ byte deactivate_relay(float amps, float CutOffApms, unsigned long SogMorning, un
       if (elaptime > SogMorning)
       {
         digitalWrite(13, LOW);
-        Serial.println("SOGMorning condtion meet");
         return 0;
       }
     }
     if (elaptime > SogNight)
     {
       digitalWrite(13, LOW);
-      Serial.println("SOGNight condtion meet");
       return 0;
     }
   }
@@ -77,7 +74,6 @@ byte deactivate_relay(float amps, float CutOffApms, unsigned long SogMorning, un
     if (cTime == OffTime)
     {
       digitalWrite(13, LOW);
-      Serial.println("offtime reached");
       return 0;
     }
   }
